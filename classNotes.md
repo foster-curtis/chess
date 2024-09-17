@@ -14,10 +14,10 @@
   - By convention, classes are always capitalized (including enums)
 
   ### Enumerations
-      - Similar to a class
-      - Helps avoid string typo errors
-      - Restricts inputs to a set
-      - Look up what `OBJ.class` does/means
+  - Similar to a class
+  - Helps avoid string typo errors
+  - Restricts inputs to a set
+  - Look up what `OBJ.class` does/means
    
   - Hide details that don't have to be shared! It makes it easier to change your mind later.
   - Getters restrict direct access
@@ -25,14 +25,14 @@
   - Make sure your information remains safe by only returning copies to the user (especially private variables)
 
   ### The Object Class
-    - All other objects inherit from this class
-    - Has the following methods: (Items after a `:` are the return value)
-        - toString() : string  ]
-        - equals : boolean     ]  Commonly Overridden
-        - hashCode() : int     ]
-        - clone() : Object  --Creates Copies
-        - wait()    }  Both help with synchronization
-        - notify()  }
+   - All other objects inherit from this class
+   - Has the following methods: (Items after a `:` are the return value)
+      - toString() : string  ]
+      - equals : boolean     ]  Commonly Overridden
+      - hashCode() : int     ]
+      - clone() : Object  --Creates Copies
+      - wait()    }  Both help with synchronization
+      - notify()  }
   - Include `@Override` if you are going to override built-in functions
   - Ways to check equals:
     - If they are identical (have the same memory address), return True
@@ -42,10 +42,10 @@
     #### Type Casting:
       - `Example name = (Example) o;` Where `o` is of class `Object` and `Example` is a class
   ### Hashcodes
-    - Override hashcode to return a prime number multiplied by the sum of the values of your string
+  - Override hashcode to return a prime number multiplied by the sum of the values of your string
   ### Records
-    - record ClassName(param1, param2, param3) {}
-    - *Do more research on this!*
+  - record ClassName(param1, param2, param3) {}
+  - *Do more research on this!*
 
   ## For Chess:
   - Overrride toString, hashCode, adn equals, on:
