@@ -1,6 +1,6 @@
-#240 Notes, Fall 2024
+# 240 Notes, Fall 2024
 
-##Classes, Sep 12
+## Classes, Sep 12
   - Every class has a default constructor that takes no parameters and does nothing
   - The Special signature entry point for a class looks like: `public static void main(String[] args) {}`
   - The `this` command gives you a pointer directly to the object you are within
@@ -13,7 +13,7 @@
   - When you are calling constructors, you must begin with the keyword `new`
   - By convention, classes are always capitalized (including enums)
 
-  ###Enumerations
+  ### Enumerations
       - Similar to a class
       - Helps avoid string typo errors
       - Restricts inputs to a set
@@ -24,7 +24,7 @@
   - Setters enforce constraints on how changes are made
   - Make sure your information remains safe by only returning copies to the user (especially private variables)
 
-  ###The Object Class
+  ### The Object Class
     - All other objects inherit from this class
     - Has the following methods: (Items after a `:` are the return value)
         - toString() : string  ]
@@ -39,15 +39,15 @@
     - If check is null, or if the two objects have different classes, return False
     - If neither of those pass, cast the current object class to the object, and compare the values and return a boolean.
     - `==` compares memory addresses directly. Default implementation of `.equals()` method is also a memory compare. ***CHANGE IT!***
-    ####Type Casting:
+    #### Type Casting:
       - `Example name = (Example) o;` Where `o` is of class `Object` and `Example` is a class
-  ###Hashcodes
+  ### Hashcodes
     - Override hashcode to return a prime number multiplied by the sum of the values of your string
-  ###Records
+  ### Records
     - record ClassName(param1, param2, param3) {}
     - *Do more research on this!*
 
-  ##For Chess:
+  ## For Chess:
   - Overrride toString, hashCode, adn equals, on:
     - Game
     - Board
