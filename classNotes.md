@@ -106,6 +106,40 @@ public interface List<E> {
 - Make Chess Piece class an interface and make a new class for each piece type?
 - Create a seperate class for rules and make subclasses inherit from it with the rules for each piece
 
+## Exceptions and Collections
+
+Package: java.util
+Interfaces: List, Map, Set, Iterattor
+Implementations: ArrayList, HashMap, HashSet
+
+Comparable interface allows you to compare objects (<, >, =) more than just equals
+
+USE THE UTILS!
+
+### Exceptions
+- Pushing up the handling of errors
+- Jumps back up through the call stack and returns an error. It must be _caught_ somewhere along the line or the program will crash!
+Basic syntax:
+```
+try {
+  // Code that might throw an exception
+} catch (FileNotFoundException) {
+  // Specific Exceptions
+} catch (Exception e) {
+  // General Exception
+} finally {
+  // Code HERE after the catch statements will still be executed, regardless of whether or not an esception is thrown!
+}
+```
+- Functions that can throw an exception must document that they can throw an exception. Functions that call a function that trows an exception must also document this. Ex:
+`public void func() throw Exception`
+- Functions that catch an exception do not need this documentation.
+- You can have a block with just `try` and `finally` that will not handle exceptions but will still run the code in finally before it continues to throw the exception up.
+  - This is especially useful for file handlers! Close files on your way up the stack
+- **tryWithResources block shortens the syntax for `try` with `finally` block**
+
+#### Exceptions Must Be Exceptional!!
+-Don't use exceptions as flow of execution logic!!
 
 
 
