@@ -8,16 +8,25 @@ public class PawnMoveCalculator extends MoveCalculator {
         super(start, pieceColor, board);
     }
 
-    private boolean checkPromotion() {
-        return true;
+    private boolean checkPromotion(ChessPosition position) {
+        return switch (this.getPieceColor()) {
+            case WHITE -> position.getRow() == 8;
+            case BLACK -> position.getRow() == 1;
+        };
     }
 
     private Collection<ChessMove> checkOneSide(ChessPosition position) {
         ArrayList<ChessMove> moves = new ArrayList<>();
         if (inBoardRange(position.getRow(), position.getColumn()) && (this.getBoard().getPiece(position) != null)) {
             if (this.getBoard().getPiece(position).getTeamColor() != this.getPieceColor()) {
-                //checkPromotion()
-                moves.add(new ChessMove(this.getStart(), position, null));
+                if (checkPromotion(position)) {
+                    moves.add(new ChessMove(this.getStart(), position, ChessPiece.PieceType.ROOK));
+                    moves.add(new ChessMove(this.getStart(), position, ChessPiece.PieceType.QUEEN));
+                    moves.add(new ChessMove(this.getStart(), position, ChessPiece.PieceType.KNIGHT));
+                    moves.add(new ChessMove(this.getStart(), position, ChessPiece.PieceType.BISHOP));
+                } else {
+                    moves.add(new ChessMove(this.getStart(), position, null));
+                }
             }
         }
         return moves;
@@ -43,9 +52,15 @@ public class PawnMoveCalculator extends MoveCalculator {
         if (this.getBoard().getPiece(end) != null) {
             return moves;
         } else {
-            //checkPromotion
             var endPosition = new ChessPosition(end.getRow(), end.getColumn());
-            moves.add(new ChessMove(this.getStart(), endPosition, null));
+            if (checkPromotion(endPosition)) {
+                moves.add(new ChessMove(this.getStart(), endPosition, ChessPiece.PieceType.ROOK));
+                moves.add(new ChessMove(this.getStart(), endPosition, ChessPiece.PieceType.QUEEN));
+                moves.add(new ChessMove(this.getStart(), endPosition, ChessPiece.PieceType.KNIGHT));
+                moves.add(new ChessMove(this.getStart(), endPosition, ChessPiece.PieceType.BISHOP));
+            } else {
+                moves.add(new ChessMove(this.getStart(), endPosition, null));
+            }
         }
         if (this.getStart().getRow() == startRow) {
             end.offset(direction, 0);
