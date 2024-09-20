@@ -10,9 +10,8 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private
-        ChessPiece.PieceType type;
-        ChessGame.TeamColor pieceColor;
+    private final ChessPiece.PieceType type;
+    private final ChessGame.TeamColor pieceColor;
 
     @Override
     public boolean equals(Object o) {
@@ -65,7 +64,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        return new BishopMoveCalculator(myPosition,this.getTeamColor(), board).calculateMoves();
     }
 
     @Override
