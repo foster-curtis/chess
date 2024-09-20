@@ -44,12 +44,14 @@ public class PawnMoveCalculator extends MoveCalculator {
             return moves;
         } else {
             //checkPromotion
-            moves.add(new ChessMove(this.getStart(), end, null));
+            var endPosition = new ChessPosition(end.getRow(), end.getColumn());
+            moves.add(new ChessMove(this.getStart(), endPosition, null));
         }
         if (this.getStart().getRow() == startRow) {
             end.offset(direction, 0);
             if (this.getBoard().getPiece(end) == null) {
-                moves.add(new ChessMove(this.getStart(), end, null));
+                var endPosition = new ChessPosition(end.getRow(), end.getColumn());
+                moves.add(new ChessMove(this.getStart(), endPosition, null));
             }
         }
         return moves;
