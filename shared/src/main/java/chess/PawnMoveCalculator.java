@@ -8,7 +8,7 @@ public class PawnMoveCalculator extends MoveCalculator {
         super(start, pieceColor, board);
     }
 
-    public boolean checkPromotion() {
+    private boolean checkPromotion() {
         return true;
     }
 
@@ -23,11 +23,11 @@ public class PawnMoveCalculator extends MoveCalculator {
         return moves;
     }
 
-    public Collection<ChessMove> checkAttack(int direction) {
+    private Collection<ChessMove> checkAttack(int direction) {
         ArrayList<ChessMove> moves = new ArrayList<>();
-        ChessPosition right = this.getStart();
+        ChessPosition right = new ChessPosition(this.getStart().getRow(), this.getStart().getColumn());
         right.offset(direction, 1);
-        ChessPosition left = this.getStart();
+        ChessPosition left = new ChessPosition(this.getStart().getRow(), this.getStart().getColumn());
         left.offset(direction, -1);
         Collection<ChessMove> L1 = checkOneSide(left);
         Collection<ChessMove> L2 = checkOneSide(right);
@@ -36,19 +36,35 @@ public class PawnMoveCalculator extends MoveCalculator {
         return moves;
     }
 
+    private Collection<ChessMove> checkMoves(int startRow, int direction) {
+        ArrayList<ChessMove> moves = new ArrayList<>();
+        ChessPosition end = new ChessPosition(this.getStart().getRow(), this.getStart().getColumn());
+        end.offset(direction, 0);
+        if (this.getBoard().getPiece(end) != null) {
+            return moves;
+        } else {
+            //checkPromotion
+            moves.add(new ChessMove(this.getStart(), end, null));
+        }
+        if (this.getStart().getRow() == startRow) {
+            end.offset(direction, 0);
+            if (this.getBoard().getPiece(end) == null) {
+                moves.add(new ChessMove(this.getStart(), end, null));
+            }
+        }
+        return moves;
+    }
+
     @Override
     public Collection<ChessMove> calculateMoves() {
         Collection<ChessMove> moves = new ArrayList<>();
-//        int limit = 1;
-//        if (((this.getPieceColor() == ChessGame.TeamColor.BLACK) && (this.getStart().getRow() == 7)) || ((this.getPieceColor() == ChessGame.TeamColor.WHITE) && (this.getStart().getRow() == 2))) {
-//            limit = 2;
-//        }
-        // checkAttack takes 1 for WHITE and -1 for BLACK
         if (this.getPieceColor() == ChessGame.TeamColor.WHITE) {
             moves.addAll(this.checkAttack(1));
+            moves.addAll(this.checkMoves(2, 1));
         }
         if (this.getPieceColor() == ChessGame.TeamColor.BLACK) {
             moves.addAll(this.checkAttack(-1));
+            moves.addAll(this.checkMoves(7, -1));
         }
 
         return moves;
