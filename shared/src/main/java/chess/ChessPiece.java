@@ -64,7 +64,22 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return new BishopMoveCalculator(myPosition,this.getTeamColor(), board).calculateMoves();
+        switch (this.getPieceType()) {
+            case BISHOP:
+                return new BishopMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
+            case ROOK:
+                return new RookMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
+            case QUEEN:
+                return new QueenMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
+            case KNIGHT:
+                ;
+            case KING:
+                ;
+            case PAWN:
+                ;
+            default:
+                return null;
+        }
     }
 
     @Override

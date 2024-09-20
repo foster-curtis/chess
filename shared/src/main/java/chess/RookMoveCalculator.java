@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class RookMoveCalculator extends MoveCalculator {
 
     @Override
     public Collection<ChessMove> calculateMoves() {
-        Collection<ChessMove> moves = List.of();
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
         // Direction = up
         Collection<ChessMove> L1 = this.checkOneDirection(1, 0);
         // Direction = left
