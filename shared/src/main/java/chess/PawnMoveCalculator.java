@@ -1,7 +1,7 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class PawnMoveCalculator extends MoveCalculator {
     PawnMoveCalculator(ChessPosition start, ChessGame.TeamColor pieceColor, ChessBoard board) {
@@ -10,7 +10,7 @@ public class PawnMoveCalculator extends MoveCalculator {
 
     @Override
     public Collection<ChessMove> calculateMoves() {
-        Collection<ChessMove> moves = List.of();
+        Collection<ChessMove> moves = new ArrayList<>();
 
         return moves;
     }

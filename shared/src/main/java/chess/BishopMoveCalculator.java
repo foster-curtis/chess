@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class BishopMoveCalculator extends MoveCalculator {
     BishopMoveCalculator(ChessPosition start, ChessGame.TeamColor pieceColor, ChessBoard board) {

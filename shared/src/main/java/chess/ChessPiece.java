@@ -72,7 +72,7 @@ public class ChessPiece {
             case QUEEN:
                 return new QueenMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
             case KNIGHT:
-                ;
+                return new KnightMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
             case KING:
                 return new KingMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
             case PAWN:
