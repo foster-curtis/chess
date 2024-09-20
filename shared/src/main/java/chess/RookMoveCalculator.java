@@ -13,13 +13,13 @@ public class RookMoveCalculator extends MoveCalculator {
     public Collection<ChessMove> calculateMoves() {
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
         // Direction = up
-        Collection<ChessMove> L1 = this.checkOneDirection(1, 0);
+        Collection<ChessMove> L1 = this.checkOneDirection(1, 0, 10);
         // Direction = left
-        Collection<ChessMove> L2 = this.checkOneDirection(0, -1);
+        Collection<ChessMove> L2 = this.checkOneDirection(0, -1, 10);
         // Direction = right
-        Collection<ChessMove> L3 = this.checkOneDirection(0, 1);
+        Collection<ChessMove> L3 = this.checkOneDirection(0, 1, 10);
         // Direction = down
-        Collection<ChessMove> L4 = this.checkOneDirection(-1, 0);
+        Collection<ChessMove> L4 = this.checkOneDirection(-1, 0, 10);
 
         moves.addAll(L1);
         moves.addAll(L2);

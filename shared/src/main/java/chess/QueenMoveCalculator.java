@@ -13,21 +13,21 @@ public class QueenMoveCalculator extends MoveCalculator {
     public Collection<ChessMove> calculateMoves() {
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
         // Direction = up and right
-        Collection<ChessMove> L1 = this.checkOneDirection(1, 1);
+        Collection<ChessMove> L1 = this.checkOneDirection(1, 1, 10);
         // Direction = up and left
-        Collection<ChessMove> L2 = this.checkOneDirection(1, -1);
+        Collection<ChessMove> L2 = this.checkOneDirection(1, -1, 10);
         // Direction = down and right
-        Collection<ChessMove> L3 = this.checkOneDirection(-1, 1);
+        Collection<ChessMove> L3 = this.checkOneDirection(-1, 1, 10);
         // Direction = down and left
-        Collection<ChessMove> L4 = this.checkOneDirection(-1, -1);
+        Collection<ChessMove> L4 = this.checkOneDirection(-1, -1, 10);
         // Direction = up
-        Collection<ChessMove> L5 = this.checkOneDirection(1, 0);
+        Collection<ChessMove> L5 = this.checkOneDirection(1, 0, 10);
         // Direction = left
-        Collection<ChessMove> L6 = this.checkOneDirection(0, -1);
+        Collection<ChessMove> L6 = this.checkOneDirection(0, -1, 10);
         // Direction = right
-        Collection<ChessMove> L7 = this.checkOneDirection(0, 1);
+        Collection<ChessMove> L7 = this.checkOneDirection(0, 1, 10);
         // Direction = down
-        Collection<ChessMove> L8 = this.checkOneDirection(-1, 0);
+        Collection<ChessMove> L8 = this.checkOneDirection(-1, 0, 10);
 
         moves.addAll(L1);
         moves.addAll(L2);

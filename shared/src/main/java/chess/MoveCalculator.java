@@ -17,11 +17,12 @@ public abstract class MoveCalculator {
 
     public abstract Collection<ChessMove> calculateMoves();
 
-    public Collection<ChessMove> checkOneDirection(int x, int y) {
+    public Collection<ChessMove> checkOneDirection(int x, int y, int limit) {
         Collection<ChessMove> moves = new ArrayList<>();
         ChessPosition end = new ChessPosition(this.getStart().getRow(), this.getStart().getColumn());
         end.offset(x, y);
-        while (inBoardRange(end.getRow(), end.getColumn())) {
+        int numMoves = 0;
+        while (inBoardRange(end.getRow(), end.getColumn()) && numMoves < limit) {
             ChessPiece piece = this.getBoard().getPiece(end);
             if (piece != null) {
                 if (this.getPieceColor() != piece.getTeamColor()) {
@@ -32,6 +33,7 @@ public abstract class MoveCalculator {
             var endPosition = new ChessPosition(end.getRow(), end.getColumn());
             moves.add(new ChessMove(this.getStart(), endPosition, null));
             end.offset(x, y);
+            numMoves++;
         }
         return moves;
     }

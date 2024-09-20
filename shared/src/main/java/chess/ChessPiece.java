@@ -74,7 +74,7 @@ public class ChessPiece {
             case KNIGHT:
                 ;
             case KING:
-                ;
+                return new KingMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
             case PAWN:
                 ;
             default:
