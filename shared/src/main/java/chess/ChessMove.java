@@ -11,6 +11,7 @@ import java.util.Objects;
 public class ChessMove {
     private final ChessPosition startPosition;
     private final ChessPosition endPosition;
+    private final ChessPiece.PieceType promotionPiece;
 
     @Override
     public boolean equals(Object o) {
@@ -29,8 +30,6 @@ public class ChessMove {
         //return  startPosition + "-" + endPosition;
         return endPosition.toString();
     }
-
-    private final ChessPiece.PieceType promotionPiece;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {

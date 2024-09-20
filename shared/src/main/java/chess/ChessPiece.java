@@ -64,22 +64,14 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        switch (this.getPieceType()) {
-            case BISHOP:
-                return new BishopMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
-            case ROOK:
-                return new RookMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
-            case QUEEN:
-                return new QueenMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
-            case KNIGHT:
-                return new KnightMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
-            case KING:
-                return new KingMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
-            case PAWN:
-                ;
-            default:
-                return null;
-        }
+        return switch (this.getPieceType()) {
+            case BISHOP -> new BishopMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
+            case ROOK -> new RookMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
+            case QUEEN -> new QueenMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
+            case KNIGHT -> new KnightMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
+            case KING -> new KingMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
+            case PAWN -> new PawnMoveCalculator(myPosition, this.getTeamColor(), board).calculateMoves();
+        };
     }
 
     @Override
