@@ -141,6 +141,51 @@ try {
 #### Exceptions Must Be Exceptional!!
 -Don't use exceptions as flow of execution logic!!
 
+# Good Design Principles!
+## Domain Driven Design
+  - Domain = problem we are trying to solve
+  - Stop thinking about the hardware, and start thinking about the domain
+  - Think about what the customer wants in the real world and represent that in your software
+
+  - **Questions to ask yourself:**
+      - Who are the *actors* in the system?
+      - What tasks do they want to accomplish?
+      - What are the *objects* that the actors use?
+      - What are the *interactions* between that actors and objects?
+  
+  ### Object Oriented Design
+  - Model real world objects in code
+  - Don't try to represent every part of your object, remember who the actors are, what they want to accomplish, and what they will need to interact with and how. Add properties and methods to reflect that.
+  - Don't make things that are transitive (like age) properties. Instead have them as methods and calculate them each time it is needed. (Calculate age based on the current date and the person's birthday
+
+  #### Properties to consider:
+  - Is-A relationship: Inheritance, an aspect of what something is (A Programmer is a Person)
+  - Has-A relationship: Ecapsulation, Classes as properties of classes (A Programmer has a Computer)
+  - Uses-A relationship: Transient association. This is often connected to an operation (A Person uses a Car to travel)
+
+#### Design Goal: Simplicity
+##### Tools: Decomposition, KISS, YAGNI, DRY
+  - **K**eep **I**t **S**imple **S**marty: Do everything as simply as possible first, then expland it if necessary as you go
+  - **Y**ou **A**ren't **G**onna **N**eed **I**t: Don't add functionality for the future if you're not certain you are going to use it
+  - **D**on't **R**epeat **Y**ourself: Don't copy code from one function to the other! Find patterns and overlap and use classes and functions to make it work
+
+#### Design Goal: High Cohesion, Low Coupling
+- High Cohesion: Within the object, everything is connected well (Everything that goes with the kitchen is in the kitchen. Don't put a toilet in your kitchen)
+- Low Coupling: Between objects, there is little connection. Have connector objects to connect things when necessary but don't connect the objects directly (Kitchen object and bathroom object are connected by plumbing object, but kitchen does not know about bathroom)
+
+Uncle Bob S.O.L.I.D:
+**Single Responsibility** - an actor only has one reason to use you
+**Open Closed** - Open for extention, Closed to modification
+**Liskov Substitution** - If you extend an interface, implement it!
+**Interface Segregation** - Make my interfaces as cohesive as possible (Single Responsibility!)
+**Dependency Inversion** - Expose your details as part of the top level. Push information up to the high level and pass it in to the lower level. This makes extensibility much easier
+
+#### P.O.L.A: The Principle of Least Astonishment
+- Make your code easy to understand so others who read it understand what you are doing
+- How do we move a pice on the Chess Board? *Add a MovePiece() method to your ChessBoard class!*
+
+
+
 
 
 
