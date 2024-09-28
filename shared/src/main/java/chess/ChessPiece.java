@@ -53,7 +53,7 @@ public class ChessPiece {
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        return this.type;
+        return type;
     }
 
     /**

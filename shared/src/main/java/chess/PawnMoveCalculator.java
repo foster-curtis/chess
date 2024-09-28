@@ -72,7 +72,6 @@ public class PawnMoveCalculator extends MoveCalculator {
         return moves;
     }
 
-    @Override
     public Collection<ChessMove> calculateMoves() {
         Collection<ChessMove> moves = new ArrayList<>();
         if (this.getPieceColor() == ChessGame.TeamColor.WHITE) {

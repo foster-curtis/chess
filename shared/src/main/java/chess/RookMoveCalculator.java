@@ -10,20 +10,15 @@ public class RookMoveCalculator extends MoveCalculator {
 
     @Override
     public Collection<ChessMove> calculateMoves() {
-        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        Collection<ChessMove> moves = new ArrayList<>();
         // Direction = up
-        Collection<ChessMove> L1 = this.checkOneDirection(1, 0, 10);
+        moves.addAll(this.checkOneDirection(1, 0, 10));
         // Direction = left
-        Collection<ChessMove> L2 = this.checkOneDirection(0, -1, 10);
+        moves.addAll(this.checkOneDirection(0, -1, 10));
         // Direction = right
-        Collection<ChessMove> L3 = this.checkOneDirection(0, 1, 10);
+        moves.addAll(this.checkOneDirection(0, 1, 10));
         // Direction = down
-        Collection<ChessMove> L4 = this.checkOneDirection(-1, 0, 10);
-
-        moves.addAll(L1);
-        moves.addAll(L2);
-        moves.addAll(L3);
-        moves.addAll(L4);
+        moves.addAll(this.checkOneDirection(-1, 0, 10));
 
         return moves;
     }
