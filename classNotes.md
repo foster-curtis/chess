@@ -141,7 +141,121 @@ try {
 #### Exceptions Must Be Exceptional!!
 -Don't use exceptions as flow of execution logic!!
 
+# Good Design Principles!
+## Domain Driven Design
+  - Domain = problem we are trying to solve
+  - Stop thinking about the hardware, and start thinking about the domain
+  - Think about what the customer wants in the real world and represent that in your software
 
+  - **Questions to ask yourself:**
+      - Who are the *actors* in the system?
+      - What tasks do they want to accomplish?
+      - What are the *objects* that the actors use?
+      - What are the *interactions* between that actors and objects?
+  
+  ### Object Oriented Design
+  - Model real world objects in code
+  - Don't try to represent every part of your object, remember who the actors are, what they want to accomplish, and what they will need to interact with and how. Add properties and methods to reflect that.
+  - Don't make things that are transitive (like age) properties. Instead have them as methods and calculate them each time it is needed. (Calculate age based on the current date and the person's birthday
+
+  #### Properties to consider:
+  - Is-A relationship: Inheritance, an aspect of what something is (A Programmer is a Person)
+  - Has-A relationship: Ecapsulation, Classes as properties of classes (A Programmer has a Computer)
+  - Uses-A relationship: Transient association. This is often connected to an operation (A Person uses a Car to travel)
+
+#### Design Goal: Simplicity
+##### Tools: Decomposition, KISS, YAGNI, DRY
+  - **K**eep **I**t **S**imple **S**marty: Do everything as simply as possible first, then expland it if necessary as you go
+  - **Y**ou **A**ren't **G**onna **N**eed **I**t: Don't add functionality for the future if you're not certain you are going to use it
+  - **D**on't **R**epeat **Y**ourself: Don't copy code from one function to the other! Find patterns and overlap and use classes and functions to make it work
+
+#### Design Goal: High Cohesion, Low Coupling
+- High Cohesion: Within the object, everything is connected well (Everything that goes with the kitchen is in the kitchen. Don't put a toilet in your kitchen)
+- Low Coupling: Between objects, there is little connection. Have connector objects to connect things when necessary but don't connect the objects directly (Kitchen object and bathroom object are connected by plumbing object, but kitchen does not know about bathroom)
+
+Uncle Bob S.O.L.I.D:
+**Single Responsibility** - an actor only has one reason to use you
+**Open Closed** - Open for extention, Closed to modification
+**Liskov Substitution** - If you extend an interface, implement it!
+**Interface Segregation** - Make my interfaces as cohesive as possible (Single Responsibility!)
+**Dependency Inversion** - Expose your details as part of the top level. Push information up to the high level and pass it in to the lower level. This makes extensibility much easier
+
+#### P.O.L.A: The Principle of Least Astonishment
+- Make your code easy to understand so others who read it understand what you are doing
+- How do we move a pice on the Chess Board? *Add a MovePiece() method to your ChessBoard class!*
+
+## Inner Classes, Lambdas
+- Class within a class. You still have one top-level class per file, but you can hide other classes within another class
+- Static Inner Classes, Local Inner Classes, Anonymous Inner Classes, Inner Classes
+
+- Static Inner Class:
+  - Can be created independent of it's outer class (becuase of `static` keyword)
+  
+- Inner Class:
+  - Now that there is no static, the inner class can see all other information about the outer class. It has access to the parent `.this` pointer! (`OuterClass.this`)
+  
+- Local Inner Class:
+  - Used within a function
+  - Knows all the information (Local Variables, Function Parameters etc.) within the scope of the function that it was called. If returned out of the function, it retains all of that information!
+
+- Closure: Close around the surrounding creation state
+- Factory Pattern:
+  - **Look up videos on the factory pattern because that was very confusing**
+  - Implements the principle of closure. Allows you to retain information that was only in the scope of a function and carry it with a class to the rest of the program
+ 
+- Anonymous Classes:
+  - Forget about the syntax of actually declaring a class
+  - Used when you're implementing an interface. Implement the methods right in line with the call to the interface constructor. NEVER do this if you're implementing a large interface!
+
+- Lambda Functions:
+  -Works **ONLY** with a Functional Interface:
+    -An interface that only defines **one** Method
+  - Used to shorten a Functional Interface
+  - Use cases: When a function takes as a parameter a class that implements a funcitonal interface
+  - Syntax: `functionBeingCalled((parameters) -> returnValue))`
+    - Ex: `(a,b) -> {if (a > b) {return a + b};}`
+  - Lambda knows the interface type and the return type of the single method of the functional interface. This makes it so that you don't have to include that information in the function call!
+ 
+## I/O, Generics, and Serialization
+
+### I/O Streams
+- Has read and write methods depending on whether its an input or an output
+- The concept of a stream is actually based on a river: its first in, first out
+- Reader/Writer classes alow us to read/write whole streams of words/characters rather than just bytes
+  - I/O layers:
+    -`read()` and `write()` -> one byte at a time
+    -`reader()` and `writer()` -> one line at a time
+    -`Scanner()` -> whole files at a time
+
+### ArrayList and Generics
+- Historically, ArrayLists could hold any type, but Generics are ArrayLists that can only hold items of a specific type.
+  ```
+  class Storage<T> {
+    List<T> items = new ArrayList<>();
+
+    void add(T item) {
+      items.add(item);
+    }
+  }
+
+  // Now any type can be passed in!:
+
+  var intStorage = new Storage<Integer>();
+  var stringStorage = new Storage<String>();
+  ```
+
+  ### Serialization
+  - Makes an object able to be copied to another system that doesn't have accesss to your device's memory
+  - Commonly uses a "Simplified JavaScript Object"
+  - That's how we send object info across from client -> server -> client!
+    ```
+    new serializer = new Gson();
+
+    new json = serializer.toJson(obj);
+
+    var objFromJson = serializer.fromJson(json, map.class)
+    ```
+  
 
 
 
