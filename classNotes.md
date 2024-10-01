@@ -182,7 +182,7 @@ Uncle Bob S.O.L.I.D:
 
 #### P.O.L.A: The Principle of Least Astonishment
 - Make your code easy to understand so others who read it understand what you are doing
-- How do we move a pice on the Chess Board? *Add a MovePiece() method to your ChessBoard class!*
+- How do we move a piece on the Chess Board? *Add a MovePiece() method to your ChessBoard class!*
 
 ## Inner Classes, Lambdas
 - Class within a class. You still have one top-level class per file, but you can hide other classes within another class
