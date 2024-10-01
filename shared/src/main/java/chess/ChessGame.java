@@ -62,7 +62,17 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> valid = validMoves(move.getStartPosition());
+        boolean isValid = false;
+        for (var m : valid) {
+            if (m == move) {
+                isValid = true;
+                board.makeMove(move);
+            }
+        }
+        if (!isValid) {
+            throw new InvalidMoveException("That is an invalid move");
+        }
     }
 
     /**
@@ -102,7 +112,8 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        //Copies the board parameter to a new instance of ChessBoard
+        this.board = new ChessBoard(board);
     }
 
     /**
