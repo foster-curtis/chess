@@ -216,14 +216,46 @@ Uncle Bob S.O.L.I.D:
     - Ex: `(a,b) -> {if (a > b) {return a + b};}`
   - Lambda knows the interface type and the return type of the single method of the functional interface. This makes it so that you don't have to include that information in the function call!
  
-## I/O and ****
+## I/O, Generics, and Serialization
 
 ### I/O Streams
 - Has read and write methods depending on whether its an input or an output
 - The concept of a stream is actually based on a river: its first in, first out
-- 
+- Reader/Writer classes alow us to read/write whole streams of words/characters rather than just bytes
+  - I/O layers:
+    -`read()` and `write()` -> one byte at a time
+    -`reader()` and `writer()` -> one line at a time
+    -`Scanner()` -> whole files at a time
 
+### ArrayList and Generics
+- Historically, ArrayLists could hold any type, but Generics are ArrayLists that can only hold items of a specific type.
+  ```
+  class Storage<T> {
+    List<T> items = new ArrayList<>();
 
+    void add(T item) {
+      items.add(item);
+    }
+  }
+
+  // Now any type can be passed in!:
+
+  var intStorage = new Storage<Integer>();
+  var stringStorage = new Storage<String>();
+  ```
+
+  ### Serialization
+  - Makes an object able to be copied to another system that doesn't have accesss to your device's memory
+  - Commonly uses a "Simplified JavaScript Object"
+  - That's how we send object info across from client -> server -> client!
+    ```
+    new serializer = new Gson();
+
+    new json = serializer.toJson(obj);
+
+    var objFromJson = serializer.fromJson(json, map.class)
+    ```
+  
 
 
 
