@@ -10,7 +10,7 @@ public class QueenMoveCalculator extends MoveCalculator {
 
     @Override
     public Collection<ChessMove> calculateMoves() {
-        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        Collection<ChessMove> moves = new ArrayList<>();
         // Direction = up and right
         moves.addAll(this.checkOneDirection(1, 1, 10));
         // Direction = up and left
