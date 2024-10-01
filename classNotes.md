@@ -184,7 +184,44 @@ Uncle Bob S.O.L.I.D:
 - Make your code easy to understand so others who read it understand what you are doing
 - How do we move a pice on the Chess Board? *Add a MovePiece() method to your ChessBoard class!*
 
+## Inner Classes, Lambdas
+- Class within a class. You still have one top-level class per file, but you can hide other classes within another class
+- Static Inner Classes, Local Inner Classes, Anonymous Inner Classes, Inner Classes
 
+- Static Inner Class:
+  - Can be created independent of it's outer class (becuase of `static` keyword)
+  
+- Inner Class:
+  - Now that there is no static, the inner class can see all other information about the outer class. It has access to the parent `.this` pointer! (`OuterClass.this`)
+  
+- Local Inner Class:
+  - Used within a function
+  - Knows all the information (Local Variables, Function Parameters etc.) within the scope of the function that it was called. If returned out of the function, it retains all of that information!
+
+- Closure: Close around the surrounding creation state
+- Factory Pattern:
+  - **Look up videos on the factory pattern because that was very confusing**
+  - Implements the principle of closure. Allows you to retain information that was only in the scope of a function and carry it with a class to the rest of the program
+ 
+- Anonymous Classes:
+  - Forget about the syntax of actually declaring a class
+  - Used when you're implementing an interface. Implement the methods right in line with the call to the interface constructor. NEVER do this if you're implementing a large interface!
+
+- Lambda Functions:
+  -Works **ONLY** with a Functional Interface:
+    -An interface that only defines **one** Method
+  - Used to shorten a Functional Interface
+  - Use cases: When a function takes as a parameter a class that implements a funcitonal interface
+  - Syntax: `functionBeingCalled((parameters) -> returnValue))`
+    - Ex: `(a,b) -> {if (a > b) {return a + b};}`
+  - Lambda knows the interface type and the return type of the single method of the functional interface. This makes it so that you don't have to include that information in the function call!
+ 
+## I/O and ****
+
+### I/O Streams
+- Has read and write methods depending on whether its an input or an output
+- The concept of a stream is actually based on a river: its first in, first out
+- 
 
 
 
