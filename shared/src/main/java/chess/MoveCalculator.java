@@ -3,6 +3,8 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static chess.ChessPiece.PieceType.KING;
+
 public abstract class MoveCalculator {
     private final ChessPosition start;
     private final ChessGame.TeamColor pieceColor;
@@ -26,7 +28,11 @@ public abstract class MoveCalculator {
             ChessPiece piece = this.getBoard().getPiece(end);
             if (piece != null) {
                 if (this.getPieceColor() != piece.getTeamColor()) {
-                    moves.add(new ChessMove(this.getStart(), end, null));
+                    if (piece.getPieceType() == KING) {
+                        moves.add(new ChessMove(this.getStart(), end, null, true));
+                    } else {
+                        moves.add(new ChessMove(this.getStart(), end, null));
+                    }
                 }
                 break;
             }

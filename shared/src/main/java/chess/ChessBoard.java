@@ -59,6 +59,7 @@ public class ChessBoard {
         for (int row = 0; row < 8; row++) {
             sb.append("|");
             for (int col = 0; col < 8; col++) {
+                assert board[row][col] != null;
                 String symbol = board[row][col].getPieceType().toString();
                 if (Objects.equals(symbol, "KNIGHT")) {
                     symbol = "n";

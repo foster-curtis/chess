@@ -12,7 +12,7 @@ public class ChessMove {
     private final ChessPosition startPosition;
     private final ChessPosition endPosition;
     private final ChessPiece.PieceType promotionPiece;
-    boolean capturesKing = false;
+    boolean threatensKing = false;
 
     @Override
     public boolean equals(Object o) {
@@ -39,11 +39,11 @@ public class ChessMove {
     }
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
-                     ChessPiece.PieceType promotionPiece, boolean capturesKing) {
+                     ChessPiece.PieceType promotionPiece, boolean threatensKing) {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.promotionPiece = promotionPiece;
-        this.capturesKing = capturesKing;
+        this.threatensKing = threatensKing;
     }
 
     /**

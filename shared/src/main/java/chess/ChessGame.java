@@ -11,20 +11,21 @@ import java.util.Collection;
  */
 public class ChessGame {
     ChessBoard board;
-    TeamColor CurrentTeamTurn;
+    TeamColor currentTeamTurn;
+    //ChessPiece threat = null;
 
     public ChessGame() {
         ChessBoard newBoard = new ChessBoard();
         newBoard.resetBoard();
         this.board = newBoard;
-        this.CurrentTeamTurn = TeamColor.WHITE;
+        this.currentTeamTurn = TeamColor.WHITE;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return CurrentTeamTurn;
+        return currentTeamTurn;
     }
 
     /**
@@ -33,7 +34,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        CurrentTeamTurn = team;
+        currentTeamTurn = team;
     }
 
     /**
@@ -52,7 +53,11 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        if (board.getPiece(startPosition) == null) {
+            return null;
+        } else {
+            return board.getPiece(startPosition).pieceMoves(board, startPosition);
+        }
     }
 
     /**
@@ -62,6 +67,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if (this.currentTeamTurn != getTeamTurn()) {
+            throw new InvalidMoveException("Invalid Move: Out of turn.");
+        }
         Collection<ChessMove> valid = validMoves(move.getStartPosition());
         boolean isValid = false;
         for (var m : valid) {
@@ -71,7 +79,7 @@ public class ChessGame {
             }
         }
         if (!isValid) {
-            throw new InvalidMoveException("That is an invalid move");
+            throw new InvalidMoveException("Invalid Move");
         }
     }
 
@@ -80,9 +88,27 @@ public class ChessGame {
      *
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
+     * <p>
+     * We need to check if a team is in check before they attempt to make a move.
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                if (piece == null) {
+                    continue;
+                }
+                if (piece.getTeamColor() != teamColor) {
+                    Collection<ChessMove> moves = validMoves(new ChessPosition(row, col));
+                    for (var move : moves) {
+                        if (move.threatensKing) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -92,7 +118,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return false;
     }
 
     /**
@@ -103,7 +129,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return false;
     }
 
     /**

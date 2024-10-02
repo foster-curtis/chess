@@ -3,6 +3,8 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static chess.ChessPiece.PieceType.KING;
+
 public class PawnMoveCalculator extends MoveCalculator {
     PawnMoveCalculator(ChessPosition start, ChessGame.TeamColor pieceColor, ChessBoard board) {
         super(start, pieceColor, board);
@@ -19,7 +21,9 @@ public class PawnMoveCalculator extends MoveCalculator {
         ArrayList<ChessMove> moves = new ArrayList<>();
         if (inBoardRange(position.getRow(), position.getColumn()) && (this.getBoard().getPiece(position) != null)) {
             if (this.getBoard().getPiece(position).getTeamColor() != this.getPieceColor()) {
-                if (checkPromotion(position)) {
+                if (this.getBoard().getPiece(position).getPieceType() == KING) {
+                    moves.add(new ChessMove(this.getStart(), position, null, true));
+                } else if (checkPromotion(position)) {
                     moves.add(new ChessMove(this.getStart(), position, ChessPiece.PieceType.ROOK));
                     moves.add(new ChessMove(this.getStart(), position, ChessPiece.PieceType.QUEEN));
                     moves.add(new ChessMove(this.getStart(), position, ChessPiece.PieceType.KNIGHT));
@@ -38,10 +42,8 @@ public class PawnMoveCalculator extends MoveCalculator {
         right.offset(direction, 1);
         ChessPosition left = new ChessPosition(this.getStart().getRow(), this.getStart().getColumn());
         left.offset(direction, -1);
-        Collection<ChessMove> L1 = checkOneSide(left);
-        Collection<ChessMove> L2 = checkOneSide(right);
-        moves.addAll(L1);
-        moves.addAll(L2);
+        moves.addAll(checkOneSide(left));
+        moves.addAll(checkOneSide(right));
         return moves;
     }
 
