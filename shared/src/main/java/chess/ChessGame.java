@@ -84,7 +84,7 @@ public class ChessGame {
         Collection<ChessMove> valid = validMoves(move.getStartPosition());
         boolean isValid = false;
         for (var m : valid) {
-            if (m == move) {
+            if (m.equals(move)) {
                 isValid = true;
                 gameBoard.makeMove(move);
                 break;

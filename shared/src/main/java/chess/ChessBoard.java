@@ -23,9 +23,9 @@ public class ChessBoard {
     }
 
     public void makeMove(ChessMove move) {
-        ChessPiece piece = board[move.getStartPosition().getColumn() - 1][move.getStartPosition().getRow() - 1];
-        board[move.getStartPosition().getColumn() - 1][move.getStartPosition().getRow() - 1] = null;
-        board[move.getEndPosition().getColumn() - 1][move.getEndPosition().getRow() - 1] = piece;
+        ChessPiece piece = board[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1];
+        board[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
+        board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = piece;
     }
 
     /**
@@ -35,7 +35,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        this.board[position.getColumn() - 1][position.getRow() - 1] = piece;
+        this.board[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -46,7 +46,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return this.board[position.getColumn() - 1][position.getRow() - 1];
+        return this.board[position.getRow() - 1][position.getColumn() - 1];
     }
 
     public ChessPiece[][] getBoard() {
