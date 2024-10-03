@@ -25,7 +25,11 @@ public class ChessBoard {
     public void makeMove(ChessMove move) {
         ChessPiece piece = board[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1];
         board[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
-        board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = piece;
+        if (move.getPromotionPiece() == null) {
+            board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = piece;
+        } else {
+            board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+        }
     }
 
     /**

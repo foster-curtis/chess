@@ -87,6 +87,11 @@ public class ChessGame {
             if (m.equals(move)) {
                 isValid = true;
                 gameBoard.makeMove(move);
+                switch (this.getTeamTurn()) {
+                    case WHITE -> this.currentTeamTurn = TeamColor.BLACK;
+                    case BLACK -> this.currentTeamTurn = TeamColor.WHITE;
+                }
+                ;
                 break;
             }
         }
