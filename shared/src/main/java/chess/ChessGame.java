@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -56,7 +58,25 @@ public class ChessGame {
         if (board.getPiece(startPosition) == null) {
             return null;
         } else {
-            return board.getPiece(startPosition).pieceMoves(board, startPosition);
+            //ChessGame.TeamColor color = board.getPiece(startPosition).getTeamColor();
+            ArrayList<ChessMove> valid = new ArrayList<>();
+            Collection<ChessMove> possibleMoves = board.getPiece(startPosition).pieceMoves(board, startPosition);
+            for (var move : possibleMoves) {
+                board.makeMove(move);
+                if (!isInCheck(this.getTeamTurn())) {
+                    valid.add(move);
+                }
+                ChessMove undo = new ChessMove(move.getStartPosition(), move.getEndPosition(), move.getPromotionPiece());
+                undo.undoMove();
+                board.makeMove(undo);
+            }
+            return valid;
+            // We really just need to check that for every possible move, my team is not in check.
+            //So, iterate over the moves, and for each one, create a test piece that is not added
+            //to the board. Temporarily remove (but STORE!) the actual piece so it doesn't interfere,
+            //and call pieceMoves on it with the current board and the endPosition of the move.
+            //If that move would result in Check, don't add it to the list of final moves.
+            //If it does not result in check, then return it as valid.
         }
     }
 
@@ -99,7 +119,7 @@ public class ChessGame {
                     continue;
                 }
                 if (piece.getTeamColor() != teamColor) {
-                    Collection<ChessMove> moves = validMoves(new ChessPosition(row, col));
+                    Collection<ChessMove> moves = board.getPiece(new ChessPosition(row, col)).pieceMoves(board, new ChessPosition(row, col));
                     for (var move : moves) {
                         if (move.threatensKing) {
                             return true;
@@ -119,6 +139,10 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         return false;
+        //This should be similar to valid moves I think. Get the pieceMoves values from all
+        //the pieces, and check each one, except this time you're checking to see if it would
+        //NOT result in check. If there is at least one move that can do so, return false.
+        //otherwise, return true.
     }
 
     /**
@@ -129,7 +153,21 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return false;
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                if (piece == null) {
+                    continue;
+                }
+                if (piece.getTeamColor() == teamColor) {
+                    Collection<ChessMove> moves = validMoves(new ChessPosition(row, col));
+                    if (!moves.isEmpty()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
