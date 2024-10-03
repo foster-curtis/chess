@@ -9,8 +9,8 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessMove {
-    private ChessPosition startPosition;
-    private ChessPosition endPosition;
+    private final ChessPosition startPosition;
+    private final ChessPosition endPosition;
     private final ChessPiece.PieceType promotionPiece;
     boolean threatensKing = false;
 
@@ -68,11 +68,5 @@ public class ChessMove {
      */
     public ChessPiece.PieceType getPromotionPiece() {
         return promotionPiece;
-    }
-
-    public void undoMove() {
-        ChessPosition temp = this.startPosition;
-        this.startPosition = this.endPosition;
-        this.endPosition = temp;
     }
 }

@@ -57,13 +57,15 @@ public class ChessGame {
         ArrayList<ChessMove> valid = new ArrayList<>();
         Collection<ChessMove> possibleMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
         for (var move : possibleMoves) {
+            ChessPiece capturedPiece = null;
+            if (gameBoard.getPiece(move.getEndPosition()) != null) {
+                capturedPiece = gameBoard.getPiece(move.getEndPosition());
+            }
             gameBoard.makeMove(move);
             if (!isInCheck(this.getTeamTurn())) {
                 valid.add(move);
             }
-            ChessMove undo = new ChessMove(move.getStartPosition(), move.getEndPosition(), move.getPromotionPiece());
-            undo.undoMove();
-            gameBoard.makeMove(undo);
+            gameBoard.undoMove(move, capturedPiece);
         }
         return valid;
     }
@@ -87,11 +89,10 @@ public class ChessGame {
             if (m.equals(move)) {
                 isValid = true;
                 gameBoard.makeMove(move);
-                switch (this.getTeamTurn()) {
-                    case WHITE -> this.currentTeamTurn = TeamColor.BLACK;
-                    case BLACK -> this.currentTeamTurn = TeamColor.WHITE;
-                }
-                ;
+                this.currentTeamTurn = switch (this.getTeamTurn()) {
+                    case WHITE -> TeamColor.BLACK;
+                    case BLACK -> TeamColor.WHITE;
+                };
                 break;
             }
         }
@@ -144,13 +145,15 @@ public class ChessGame {
                 if (piece.getTeamColor() == teamColor) {
                     Collection<ChessMove> possibleMoves = piece.pieceMoves(gameBoard, new ChessPosition(row, col));
                     for (var move : possibleMoves) {
-                        this.getBoard().makeMove(move);
+                        ChessPiece capturedPiece = null;
+                        if (gameBoard.getPiece(move.getEndPosition()) != null) {
+                            capturedPiece = gameBoard.getPiece(move.getEndPosition());
+                        }
+                        gameBoard.makeMove(move);
                         if (!isInCheck(this.getTeamTurn())) {
                             return false;
                         }
-                        ChessMove undo = new ChessMove(move.getStartPosition(), move.getEndPosition(), move.getPromotionPiece());
-                        undo.undoMove();
-                        gameBoard.makeMove(undo);
+                        gameBoard.undoMove(move, capturedPiece);
                     }
                 }
             }

@@ -32,6 +32,13 @@ public class ChessBoard {
         }
     }
 
+    public void undoMove(ChessMove move, ChessPiece capturedPiece) {
+        ChessPiece piece = board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1];
+        board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = null;
+        board[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = piece;
+        board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = capturedPiece;
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
