@@ -28,10 +28,6 @@ public class ChessBoard {
         board[move.getEndPosition().getColumn() - 1][move.getEndPosition().getRow() - 1] = piece;
     }
 
-    public void removePiece(ChessPosition position) {
-        this.board[position.getColumn() - 1][position.getRow() - 1] = null;
-    }
-
     /**
      * Adds a chess piece to the chessboard
      *
