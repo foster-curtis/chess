@@ -5,20 +5,20 @@ import java.util.Collection;
 
 
 /**
- * For a class that can manage a chess game, making moves on a board
+ * For a class that can manage a chess game, making moves on a gameBoard
  * <p>
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
 public class ChessGame {
-    ChessBoard board;
+    ChessBoard gameBoard;
     TeamColor currentTeamTurn;
     //ChessPiece threat = null;
 
     public ChessGame() {
         ChessBoard newBoard = new ChessBoard();
         newBoard.resetBoard();
-        this.board = newBoard;
+        this.gameBoard = newBoard;
         this.currentTeamTurn = TeamColor.WHITE;
     }
 
@@ -54,22 +54,18 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (board.getPiece(startPosition) == null) {
-            return null;
-        } else {
-            ArrayList<ChessMove> valid = new ArrayList<>();
-            Collection<ChessMove> possibleMoves = board.getPiece(startPosition).pieceMoves(board, startPosition);
-            for (var move : possibleMoves) {
-                board.makeMove(move);
-                if (!isInCheck(this.getTeamTurn())) {
-                    valid.add(move);
-                }
-                ChessMove undo = new ChessMove(move.getStartPosition(), move.getEndPosition(), move.getPromotionPiece());
-                undo.undoMove();
-                board.makeMove(undo);
+        ArrayList<ChessMove> valid = new ArrayList<>();
+        Collection<ChessMove> possibleMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
+        for (var move : possibleMoves) {
+            gameBoard.makeMove(move);
+            if (!isInCheck(this.getTeamTurn())) {
+                valid.add(move);
             }
-            return valid;
+            ChessMove undo = new ChessMove(move.getStartPosition(), move.getEndPosition(), move.getPromotionPiece());
+            undo.undoMove();
+            gameBoard.makeMove(undo);
         }
+        return valid;
     }
 
     /**
@@ -79,7 +75,10 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (this.currentTeamTurn != getTeamTurn()) {
+        if (gameBoard.getPiece(move.getStartPosition()) == null) {
+            throw new InvalidMoveException("Invalid Move: No piece at start position.");
+        }
+        if (this.currentTeamTurn != gameBoard.getPiece(move.getStartPosition()).getTeamColor()) {
             throw new InvalidMoveException("Invalid Move: Out of turn.");
         }
         Collection<ChessMove> valid = validMoves(move.getStartPosition());
@@ -87,7 +86,8 @@ public class ChessGame {
         for (var m : valid) {
             if (m == move) {
                 isValid = true;
-                board.makeMove(move);
+                gameBoard.makeMove(move);
+                break;
             }
         }
         if (!isValid) {
@@ -106,12 +106,12 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                ChessPiece piece = gameBoard.getPiece(new ChessPosition(row, col));
                 if (piece == null) {
                     continue;
                 }
                 if (piece.getTeamColor() != teamColor) {
-                    Collection<ChessMove> moves = board.getPiece(new ChessPosition(row, col)).pieceMoves(board, new ChessPosition(row, col));
+                    Collection<ChessMove> moves = gameBoard.getPiece(new ChessPosition(row, col)).pieceMoves(gameBoard, new ChessPosition(row, col));
                     for (var move : moves) {
                         if (move.threatensKing) {
                             return true;
@@ -132,20 +132,20 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                ChessPiece piece = gameBoard.getPiece(new ChessPosition(row, col));
                 if (piece == null) {
                     continue;
                 }
                 if (piece.getTeamColor() == teamColor) {
-                    Collection<ChessMove> possibleMoves = piece.pieceMoves(board, new ChessPosition(row, col));
+                    Collection<ChessMove> possibleMoves = piece.pieceMoves(gameBoard, new ChessPosition(row, col));
                     for (var move : possibleMoves) {
-                        board.makeMove(move);
+                        this.getBoard().makeMove(move);
                         if (!isInCheck(this.getTeamTurn())) {
                             return false;
                         }
                         ChessMove undo = new ChessMove(move.getStartPosition(), move.getEndPosition(), move.getPromotionPiece());
                         undo.undoMove();
-                        board.makeMove(undo);
+                        gameBoard.makeMove(undo);
                     }
                 }
             }
@@ -167,7 +167,7 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                ChessPiece piece = gameBoard.getPiece(new ChessPosition(row, col));
                 if (piece == null) {
                     continue;
                 }
@@ -183,13 +183,13 @@ public class ChessGame {
     }
 
     /**
-     * Sets this game's chessboard with a given board
+     * Sets this game's chessboard with a given gameBoard
      *
-     * @param board the new board to use
+     * @param gameBoard the new gameBoard to use
      */
-    public void setBoard(ChessBoard board) {
-        //Copies the board parameter to a new instance of ChessBoard
-        this.board = new ChessBoard(board);
+    public void setBoard(ChessBoard gameBoard) {
+        //Copies the gameBoard parameter to a new instance of ChessBoard
+        this.gameBoard = new ChessBoard(gameBoard);
     }
 
     /**
@@ -198,6 +198,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        return this.board;
+        return this.gameBoard;
     }
 }

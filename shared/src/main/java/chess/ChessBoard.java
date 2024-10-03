@@ -91,7 +91,7 @@ public class ChessBoard {
     }
 
     /**
-     * Sets the board to the default starting board
+     * Sets the gameBoard to the default starting gameBoard
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
