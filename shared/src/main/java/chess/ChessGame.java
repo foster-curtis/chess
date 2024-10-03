@@ -55,14 +55,18 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ArrayList<ChessMove> valid = new ArrayList<>();
+        if (gameBoard.getPiece(startPosition) == null) {
+            return null;
+        }
         Collection<ChessMove> possibleMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
         for (var move : possibleMoves) {
             ChessPiece capturedPiece = null;
             if (gameBoard.getPiece(move.getEndPosition()) != null) {
                 capturedPiece = gameBoard.getPiece(move.getEndPosition());
             }
+            ChessGame.TeamColor color = gameBoard.getPiece(startPosition).getTeamColor();
             gameBoard.makeMove(move);
-            if (!isInCheck(this.getTeamTurn())) {
+            if (!isInCheck(color)) {
                 valid.add(move);
             }
             gameBoard.undoMove(move, capturedPiece);
@@ -136,33 +140,33 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        for (int row = 1; row <= 8; row++) {
-            for (int col = 1; col <= 8; col++) {
-                ChessPiece piece = gameBoard.getPiece(new ChessPosition(row, col));
-                if (piece == null) {
-                    continue;
-                }
-                if (piece.getTeamColor() == teamColor) {
-                    Collection<ChessMove> possibleMoves = piece.pieceMoves(gameBoard, new ChessPosition(row, col));
-                    for (var move : possibleMoves) {
-                        ChessPiece capturedPiece = null;
-                        if (gameBoard.getPiece(move.getEndPosition()) != null) {
-                            capturedPiece = gameBoard.getPiece(move.getEndPosition());
+        if (isInCheck(teamColor)) {
+            for (int row = 1; row <= 8; row++) {
+                for (int col = 1; col <= 8; col++) {
+                    ChessPiece piece = gameBoard.getPiece(new ChessPosition(row, col));
+                    if (piece == null) {
+                        continue;
+                    }
+                    if (piece.getTeamColor() == teamColor) {
+                        Collection<ChessMove> possibleMoves = piece.pieceMoves(gameBoard, new ChessPosition(row, col));
+                        for (var move : possibleMoves) {
+                            ChessPiece capturedPiece = null;
+                            if (gameBoard.getPiece(move.getEndPosition()) != null) {
+                                capturedPiece = gameBoard.getPiece(move.getEndPosition());
+                            }
+                            gameBoard.makeMove(move);
+                            if (!isInCheck(teamColor)) {
+                                return false;
+                            }
+                            gameBoard.undoMove(move, capturedPiece);
                         }
-                        gameBoard.makeMove(move);
-                        if (!isInCheck(this.getTeamTurn())) {
-                            return false;
-                        }
-                        gameBoard.undoMove(move, capturedPiece);
                     }
                 }
             }
+            return true;
+        } else {
+            return false;
         }
-        return true;
-        //This should be similar to valid moves I think. Get the pieceMoves values from all
-        //the pieces, and check each one, except this time you're checking to see if it would
-        //NOT result in check. If there is at least one move that can do so, return false.
-        //otherwise, return true.
     }
 
     /**
@@ -187,7 +191,7 @@ public class ChessGame {
                 }
             }
         }
-        return true;
+        return !isInCheckmate(teamColor);
     }
 
     /**
