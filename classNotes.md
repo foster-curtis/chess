@@ -255,6 +255,10 @@ Uncle Bob S.O.L.I.D:
 
     var objFromJson = serializer.fromJson(json, map.class)
     ```
+
+  ## Phase 2
+  - Makse sure you thoughroughly read the project 3 specifications so you understand what you are designing in phase two!
+  - Must have UserData, AuthData, and GameData
   
 
 
