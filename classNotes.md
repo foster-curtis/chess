@@ -260,6 +260,46 @@ Uncle Bob S.O.L.I.D:
   - Makse sure you thoughroughly read the project 3 specifications so you understand what you are designing in phase two!
   - Must have UserData, AuthData, and GameData
   
+## HTTP and Web API
+- HTTP is  a client to server protocall, meaning the client has to request something from the server and the server will send something back.
+- Two things you need to make a connection: domain and port #
+- URL = Uniform resource locator
+  - Scheme (https)
+  - Domain (server name)
+  - Port
+  - Path (path to the resource I'm asking for)
+  - Parameters (restricts how the resources is returned)
+  - Anchor tag (information for client rendering)
+- For our chess servers:
+  - `http://localhost:8080/user`
+  - Sheme = `http`
+  - domain = `localhost`
+  - port = `8080`
+  - path = `user`
+- Encodings for cURL `-X` = change method, `-H` = change header, `-d` = change data
+
+### Requests
+  - Method, Path, and version
+  - Headers (Headers describe what types of data the client is expecting back, where is is coming from, etc)
+  - Body
+  - METHODS:
+    - `GET`, `POST`, `PUT`, `DELETE`, (Theres more but I missed tham
+   
+### Response
+  - Version, Status code, Status Message
+  - Headers (can include connection status, content type, content encoding)
+  - Body
+
+  - Status codes:
+    - `2xx`: Success
+    - `3xx`: Successful, but I'm not giving what you asked for (redirect)
+    - `4xx`: Client made an error in the request
+    - `5xx`: Server errors
+
+### Web API
+- Use Java spark to deserialize and parse HTTP requests, and to serialie and send it back
+
+
 
 
 
