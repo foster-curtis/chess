@@ -299,6 +299,43 @@ Uncle Bob S.O.L.I.D:
 ### Web API
 - Use Java spark to deserialize and parse HTTP requests, and to serialie and send it back
 
+## Code Quality Goals
+- I can understand it today
+- I can understand it tomorrow
+- I can understand it quickly
+- I can enhance it tomorrow
+
+#### How do I do this?
+- Use conventions - Naming, team, language
+- Choose simplicity over clever or concise
+- Clarity over verbosity
+- Decomposition, abstraction, encapsulation
+
+#### Conventions:
+- Naming
+  - If names are not enough for clarity, add documentation
+    - This is not ideal though. Then you have written the function twice--once in human language and once in code. When you change one, you have to change the other. Longer comments also discourage reading
+  - Naming rules for Java:
+    - Object names are nouns
+    - Method names are verbs
+    - Classes begin with uppercase
+    - Methods begin with lowercase
+    - Variables begin with lowercase
+    - Package names begin with lowercase
+    - Constants are all uppercase
+    - CamelCase should be used for all names
+  - Use self-documenting code with naming
+  - `computeAndPrint()` -> breaks cohesion: does two things
+  - reduce code duplication
+  - reduce nested statements!
+ 
+- Parameters:
+  - Use symbols -> use an Enum instead of a string, bool, or int
+  - Reduce parameters -> pass configuration objects, use setters, or have valid defaults, rather than long parameter lists
+  - be consistent -> use consistent ordering (e.g. input params followed by output params)
+  - single return -> only have one place in your code that returns
+ 
+
 
 
 
