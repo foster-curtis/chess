@@ -260,6 +260,83 @@ Uncle Bob S.O.L.I.D:
   - Makse sure you thoughroughly read the project 3 specifications so you understand what you are designing in phase two!
   - Must have UserData, AuthData, and GameData
   
+## HTTP and Web API
+- HTTP is  a client to server protocall, meaning the client has to request something from the server and the server will send something back.
+- Two things you need to make a connection: domain and port #
+- URL = Uniform resource locator
+  - Scheme (https)
+  - Domain (server name)
+  - Port
+  - Path (path to the resource I'm asking for)
+  - Parameters (restricts how the resources is returned)
+  - Anchor tag (information for client rendering)
+- For our chess servers:
+  - `http://localhost:8080/user`
+  - Sheme = `http`
+  - domain = `localhost`
+  - port = `8080`
+  - path = `user`
+- Encodings for cURL `-X` = change method, `-H` = change header, `-d` = change data
+
+### Requests
+  - Method, Path, and version
+  - Headers (Headers describe what types of data the client is expecting back, where is is coming from, etc)
+  - Body
+  - METHODS:
+    - `GET`, `POST`, `PUT`, `DELETE`, (Theres more but I missed tham
+   
+### Response
+  - Version, Status code, Status Message
+  - Headers (can include connection status, content type, content encoding)
+  - Body
+
+  - Status codes:
+    - `2xx`: Success
+    - `3xx`: Successful, but I'm not giving what you asked for (redirect)
+    - `4xx`: Client made an error in the request
+    - `5xx`: Server errors
+
+### Web API
+- Use Java spark to deserialize and parse HTTP requests, and to serialie and send it back
+
+## Code Quality Goals
+- I can understand it today
+- I can understand it tomorrow
+- I can understand it quickly
+- I can enhance it tomorrow
+
+#### How do I do this?
+- Use conventions - Naming, team, language
+- Choose simplicity over clever or concise
+- Clarity over verbosity
+- Decomposition, abstraction, encapsulation
+
+#### Conventions:
+- Naming
+  - If names are not enough for clarity, add documentation
+    - This is not ideal though. Then you have written the function twice--once in human language and once in code. When you change one, you have to change the other. Longer comments also discourage reading
+  - Naming rules for Java:
+    - Object names are nouns
+    - Method names are verbs
+    - Classes begin with uppercase
+    - Methods begin with lowercase
+    - Variables begin with lowercase
+    - Package names begin with lowercase
+    - Constants are all uppercase
+    - CamelCase should be used for all names
+  - Use self-documenting code with naming
+  - `computeAndPrint()` -> breaks cohesion: does two things
+  - reduce code duplication
+  - reduce nested statements!
+ 
+- Parameters:
+  - Use symbols -> use an Enum instead of a string, bool, or int
+  - Reduce parameters -> pass configuration objects, use setters, or have valid defaults, rather than long parameter lists
+  - be consistent -> use consistent ordering (e.g. input params followed by output params)
+  - single return -> only have one place in your code that returns
+ 
+
+
 
 
 
