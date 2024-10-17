@@ -1,4 +1,6 @@
-package chess;
+package chess.moveCalculators;
+
+import chess.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,7 +8,7 @@ import java.util.Collection;
 import static chess.ChessPiece.PieceType.KING;
 
 public class PawnMoveCalculator extends MoveCalculator {
-    PawnMoveCalculator(ChessPosition start, ChessGame.TeamColor pieceColor, ChessBoard board) {
+    public PawnMoveCalculator(ChessPosition start, ChessGame.TeamColor pieceColor, ChessBoard board) {
         super(start, pieceColor, board);
     }
 

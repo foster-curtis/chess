@@ -1,10 +1,15 @@
-package chess;
+package chess.moveCalculators;
+
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class BishopMoveCalculator extends MoveCalculator {
-    BishopMoveCalculator(ChessPosition start, ChessGame.TeamColor pieceColor, ChessBoard board) {
+    public BishopMoveCalculator(ChessPosition start, ChessGame.TeamColor pieceColor, ChessBoard board) {
         super(start, pieceColor, board);
     }
 

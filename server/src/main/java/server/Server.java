@@ -10,9 +10,11 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+        //Register User
+        Spark.post("/session", (req, res) -> "{hello}");
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
+        //Spark.init();
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -22,4 +24,6 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
+
+    
 }
