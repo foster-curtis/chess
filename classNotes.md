@@ -334,6 +334,28 @@ Uncle Bob S.O.L.I.D:
   - Reduce parameters -> pass configuration objects, use setters, or have valid defaults, rather than long parameter lists
   - be consistent -> use consistent ordering (e.g. input params followed by output params)
   - single return -> only have one place in your code that returns
+
+
+## Test Driven Development (TDD)
+- Go back and forth between the test and the code. Write a test for a very small part of your program. Then, go write the code. Run the tests, and then repeat the process.
+- Ensure your tests follow good design principles!
+  - Cohesion: Only does one thing
+  - Quick to execute: For example, if your code would usually communicate over a network and take time, call into it directly just to test hte functionality
+  - Do not repeat: don't test things twice!
+  - Stable: If it passes once, it should pass every time!
+  - Automated: One keystroke to run them
+
+  ### JUnit
+  - Include the `@Test` tag to tell the compiler that the funciton is a test
+  - The `@Disabeled` tag disables the test so it doesn't run, but it still lists it when all tests are run (so you don't forget to finish it!)
+  - `@ParameterizedTest` allows you to run the same test multiple times with different inputs/implementations **Use these for DataAccess Tests**
+
+  ### Code Coverage
+  - Make sure your tests test every part fo your code! Don't leave anything untested.
+  - You can `Run tests with coverage` and get data on what lines of your code were tested and how much of it works
+  - **THIS IS SUPER COOL! USE IT**
+
+  
  
 
 
