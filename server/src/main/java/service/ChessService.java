@@ -10,18 +10,22 @@ public class ChessService {
     private final GameDAO gameAccess;
     private final UserDAO userAccess;
     private final AuthDAO authAccess;
-    private final UserService userService;
-    private final GameService gameService;
 
     public ChessService(GameDAO gameDAO, UserDAO userDAO, AuthDAO authDAO) {
         gameAccess = gameDAO;
         userAccess = userDAO;
         authAccess = authDAO;
-        userService = new UserService();
-        gameService = new GameService();
     }
 
-    //Game Services
+    // Clear
+
+    public void clear() {
+        userAccess.clear();
+        gameAccess.clear();
+        authAccess.clear();
+    }
+
+    // Game Services
 
     public Collection<GameData> listGames(AuthData authData) {
         return null;
@@ -35,10 +39,10 @@ public class ChessService {
 
     }
 
-    //User Services
+    // User Services
 
-    public AuthData registerUser(UserData user) throws DataAccessException {
-        if (Objects.equals(userAccess.getUser(user).username(), user.username())) {
+    public AuthData register(UserData user) throws DataAccessException {
+        if (userAccess.getUser(user) != null) {
             throw new DataAccessException("already taken");
         } else {
             userAccess.createUser(user);

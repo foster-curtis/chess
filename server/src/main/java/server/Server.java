@@ -25,11 +25,10 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+        //Clear
+        Spark.delete("/db", this::clearHandler);
         //Register User
         Spark.post("/user", this::registerUserHandler);
-
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        //Spark.init();
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -42,8 +41,12 @@ public class Server {
 
     private Object registerUserHandler(Request req, Response res) throws DataAccessException {
         var user = new Gson().fromJson(req.body(), UserData.class);
-        var auth = service.registerUser(user);
+        var auth = service.register(user);
         return new Gson().toJson(auth);
     }
 
+    private Object clearHandler(Request req, Response res) {
+        service.clear();
+        return new Gson().toJson(res);
+    }
 }
