@@ -354,6 +354,23 @@ Uncle Bob S.O.L.I.D:
   - Make sure your tests test every part fo your code! Don't leave anything untested.
   - You can `Run tests with coverage` and get data on what lines of your code were tested and how much of it works
   - **THIS IS SUPER COOL! USE IT**
+ 
+
+## Relational Databases
+- Like a simple 2D table
+  - There are row relationships and column relationships
+  - Column relationships = fields
+  - Row relationships = objects
+- Seperate tables can also be related if they have similar column headers
+- Primary keys are in the first column of a table, giving it's row a specific ID
+- Secondary keys are references in one table to a primary key of a different table to map information from one table to the other
+- Key Characteristics:
+  - Unique -> No duplicates
+  - Stable -> Doesn't change
+  - Simple -> Avoid composites
+- Use UUID for a db key for users and maybe games? It meets all of the criteria, and has some useful implementation effects.
+  -> or not, because SQL has built in functionality to assign keys and return them
+
 
   
  
