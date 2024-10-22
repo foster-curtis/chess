@@ -2,6 +2,9 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryGameDAO;
+import dataaccess.MemoryUserDAO;
 import model.*;
 import service.ChessService;
 import spark.*;
@@ -9,8 +12,11 @@ import spark.*;
 public class Server {
     private final ChessService service;
 
-    public Server(ChessService service) {
-        this.service = service;
+    public Server() {
+        var auth = new MemoryAuthDAO();
+        var game = new MemoryGameDAO();
+        var user = new MemoryUserDAO();
+        service = new ChessService(game, user, auth);
     }
 
     public int run(int desiredPort) {
