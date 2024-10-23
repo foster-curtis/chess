@@ -5,16 +5,11 @@ import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import model.*;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import service.*;
 
 import org.junit.jupiter.api.Test;
-
-import javax.xml.crypto.Data;
-
-import java.util.concurrent.atomic.DoubleAdder;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -44,8 +39,8 @@ public class TestService {
     @Test
     public void registerUserFail() {
         try {
-            var auth = service.register(startingUser);
-            var auth2 = service.register(startingUser);
+            service.register(startingUser);
+            service.register(startingUser);
             fail("User was registered twice");
         } catch (DataAccessException exception) {
             Assertions.assertInstanceOf(DataAccessException.class, exception);

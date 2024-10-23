@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
@@ -11,6 +12,7 @@ import service.ResponseException;
 import spark.*;
 
 import javax.xml.crypto.Data;
+import java.util.Collection;
 import java.util.Map;
 
 public class Server {
@@ -63,7 +65,13 @@ public class Server {
     private Object exceptionHandler(Exception exception, Request req, Response res) {
         var body = new Gson().toJson(Map.of("message", String.format("Error: %s", exception.getMessage())));
         res.type("application/json");
-        res.status(500);
+        if (exception instanceof DataAccessException) {
+            res.status(((DataAccessException) exception).StatusCode());
+        } else if (exception instanceof ResponseException) {
+            res.status(((ResponseException) exception).status());
+        } else {
+            res.status(500);
+        }
         res.body(body);
         return body;
     }
@@ -76,7 +84,8 @@ public class Server {
 
     private Object clearHandler(Request req, Response res) {
         service.clear();
-        return new Gson().toJson("{}");
+        JsonObject empty = new JsonObject();
+        return new Gson().toJson(empty);
     }
 
     private Object loginHandler(Request req, Response res) throws DataAccessException {
@@ -86,13 +95,16 @@ public class Server {
     }
 
     private Object logoutHandler(Request req, Response res) throws DataAccessException {
-        var auth = new Gson().fromJson(req.body(), AuthData.class);
+        AuthData auth = new AuthData(req.headers("authorization"), null);
         service.logout(auth);
-        return new Gson().toJson("{}");
+        JsonObject empty = new JsonObject();
+        return new Gson().toJson(empty);
     }
 
-    private Object listGamesHandler(Request req, Response res) {
-        return null;
+    private Object listGamesHandler(Request req, Response res) throws DataAccessException {
+        AuthData auth = new AuthData(req.headers("authorization"), null);
+        Collection<GameData> games = service.listGames(auth);
+        return new Gson().toJson(Map.of("games", games));
     }
 
     private Object createGameHandler(Request req, Response res) {

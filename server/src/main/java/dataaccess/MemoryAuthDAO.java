@@ -4,6 +4,7 @@ import model.AuthData;
 import model.UserData;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO {
@@ -16,13 +17,16 @@ public class MemoryAuthDAO implements AuthDAO {
     @Override
     public AuthData createAuth(UserData userData, String authToken) throws DataAccessException {
         var newAuth = new AuthData(authToken, userData.username());
-        authMap.put(userData.username(), newAuth);
+        authMap.put(newAuth.authToken(), newAuth);
         return newAuth;
     }
 
     @Override
     public AuthData getAuth(AuthData authData) throws DataAccessException {
-        var auth = authMap.get(authData.username());
+        if (authData == null) {
+            throw new DataAccessException("unauthorized", 401);
+        }
+        var auth = authMap.get(authData.authToken());
         if (auth == null) {
             throw new DataAccessException("unauthorized", 401);
         } else {
@@ -32,7 +36,7 @@ public class MemoryAuthDAO implements AuthDAO {
 
     @Override
     public void deleteAuth(AuthData authData) throws DataAccessException {
-        authMap.remove(authData.username());
+        authMap.remove(authData.authToken());
     }
 
     @Override

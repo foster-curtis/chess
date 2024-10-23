@@ -3,9 +3,16 @@ package dataaccess;
 import model.GameData;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 public class MemoryGameDAO implements GameDAO {
+    private final HashMap<String, GameData> gameMap;
+
+    public MemoryGameDAO() {
+        this.gameMap = new HashMap<>();
+    }
+
     @Override
     public GameData createGame(GameData gameData) throws DataAccessException {
         return null;

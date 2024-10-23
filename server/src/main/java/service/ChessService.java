@@ -29,8 +29,13 @@ public class ChessService {
 
     // Game Services
 
-    public Collection<GameData> listGames(AuthData authData) {
-        return null;
+    public Collection<GameData> listGames(AuthData authData) throws DataAccessException {
+        var auth = authAccess.getAuth(authData);
+        if (auth == null) {
+            throw new DataAccessException("unauthorized", 401);
+        } else {
+            return null;
+        }
     }
 
     public GameData createGame(GameData gameData, AuthData authData) {
@@ -46,6 +51,8 @@ public class ChessService {
     public AuthData register(UserData user) throws DataAccessException {
         if (userAccess.getUser(user) != null) {
             throw new DataAccessException("already taken", 403);
+        } else if (user.password() == null || user.username() == null || user.email() == null) {
+            throw new DataAccessException("bad request", 400);
         } else {
             userAccess.createUser(user);
         }
