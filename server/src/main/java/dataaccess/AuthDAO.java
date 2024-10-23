@@ -5,7 +5,7 @@ import model.UserData;
 
 public interface AuthDAO extends DataAccess {
 
-    AuthData createAuth(UserData userData) throws DataAccessException;
+    AuthData createAuth(UserData userData, String authToken) throws DataAccessException;
 
     AuthData getAuth(AuthData authData) throws DataAccessException;
 
