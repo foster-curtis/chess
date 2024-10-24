@@ -42,7 +42,7 @@ public class ChessService {
         authenticate(authData);
         int gameID = Math.abs(new Random().nextInt());
         ChessGame game = new ChessGame();
-        GameData newGame = new GameData(gameID, null, null, gameData.gameName(), game);
+        GameData newGame = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
         gameAccess.createGame(newGame);
         return gameID;
     }

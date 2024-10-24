@@ -168,6 +168,36 @@ public class TestService {
     }
 
     @Test
+    public void joinCreatedGameNoColor() {
+        try {
+            service.register(startingUser);
+            var auth = service.login(startingUser);
+            GameData game = new GameData(0, null, null, "Test", null);
+            int gameID = service.createGame(game, auth);
+            service.joinGame(new JoinRequest(null, gameID), auth);
+            fail("should have thrown an exception for no color");
+        } catch (DataAccessException exception) {
+            Assertions.assertInstanceOf(DataAccessException.class, exception);
+            Assertions.assertEquals(exception.StatusCode(), 400);
+        }
+    }
+
+    @Test
+    public void joinCreatedGameStealColor() {
+        try {
+            service.register(startingUser);
+            var auth = service.login(startingUser);
+            GameData game = new GameData(0, null, "Joe", "Test", null);
+            int gameID = service.createGame(game, auth);
+            service.joinGame(new JoinRequest("BLACK", gameID), auth);
+            fail("should have thrown an exception for already taken");
+        } catch (DataAccessException exception) {
+            Assertions.assertInstanceOf(DataAccessException.class, exception);
+            Assertions.assertEquals(exception.StatusCode(), 403);
+        }
+    }
+
+    @Test
     public void clear() {
         try {
             var auth = service.register(startingUser);
