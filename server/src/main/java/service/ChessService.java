@@ -1,9 +1,10 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
 import model.*;
 
-import javax.xml.crypto.Data;
+import java.util.Random;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
@@ -38,8 +39,20 @@ public class ChessService {
         }
     }
 
-    public GameData createGame(GameData gameData, AuthData authData) {
-        return null;
+    public int createGame(GameData gameData, AuthData authData) throws DataAccessException {
+        if (authData == null) {
+            throw new DataAccessException("bad request", 400);
+        }
+        var auth = authAccess.getAuth(authData);
+        if (auth == null) {
+            throw new DataAccessException("unauthorized", 401);
+        } else {
+            int gameID = new Random().nextInt();
+            ChessGame game = new ChessGame();
+            GameData newGame = new GameData(gameID, null, null, gameData.gameName(), game);
+            gameAccess.createGame(newGame);
+            return gameID;
+        }
     }
 
     public void joinGame(GameData gameData, AuthData authData) {
@@ -83,5 +96,9 @@ public class ChessService {
 
     public UserData getUser(UserData user) throws DataAccessException {
         return userAccess.getUser(user);
+    }
+
+    public GameData getGame(int gameID) throws DataAccessException {
+        return gameAccess.getGame(gameID);
     }
 }

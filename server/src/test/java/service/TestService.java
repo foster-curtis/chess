@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
 import org.junit.jupiter.api.Test;
+import spark.utils.Assert;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -104,6 +105,19 @@ public class TestService {
         } catch (DataAccessException exception) {
             Assertions.assertInstanceOf(DataAccessException.class, exception);
             Assertions.assertEquals(exception.StatusCode(), 401);
+        }
+    }
+
+    @Test
+    public void createGameSuccess() {
+        try {
+            service.register(startingUser);
+            var auth = service.login(startingUser);
+            GameData game = new GameData(0, null, null, "I will win", null);
+            var gameID = service.createGame(game, auth);
+            Assertions.assertNotNull(service.getGame(gameID));
+        } catch (DataAccessException exception) {
+            fail(exception.getMessage());
         }
     }
 
