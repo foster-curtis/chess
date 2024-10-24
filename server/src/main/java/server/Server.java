@@ -84,8 +84,8 @@ public class Server {
 
     private Object clearHandler(Request req, Response res) {
         service.clear();
-        JsonObject empty = new JsonObject();
-        return new Gson().toJson(empty);
+        //Return empty JsonObject
+        return new Gson().toJson(new JsonObject());
     }
 
     private Object loginHandler(Request req, Response res) throws DataAccessException {
@@ -97,8 +97,8 @@ public class Server {
     private Object logoutHandler(Request req, Response res) throws DataAccessException {
         AuthData auth = new AuthData(req.headers("authorization"), null);
         service.logout(auth);
-        JsonObject empty = new JsonObject();
-        return new Gson().toJson(empty);
+        //Return empty JsonObject
+        return new Gson().toJson(new JsonObject());
     }
 
     private Object listGamesHandler(Request req, Response res) throws DataAccessException {
@@ -115,7 +115,11 @@ public class Server {
         return new Gson().toJson(Map.of("gameID", gameID));
     }
 
-    private Object joinGameHandler(Request req, Response res) {
-        return null;
+    private Object joinGameHandler(Request req, Response res) throws DataAccessException {
+        AuthData auth = new AuthData(req.headers("authorization"), null);
+        JoinRequest request = new Gson().fromJson(req.body(), JoinRequest.class);
+        service.joinGame(request, auth);
+        //Return empty JsonObject
+        return new Gson().toJson(new JsonObject());
     }
 }

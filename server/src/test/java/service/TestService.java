@@ -88,9 +88,12 @@ public class TestService {
     public void logoutUserFail() {
         try {
             service.register(startingUser);
-
+            service.login(startingUser);
+            service.logout(new AuthData("45", "bob"));
+            fail("did not throw exception with an invalid authToken");
         } catch (DataAccessException exception) {
-
+            Assertions.assertInstanceOf(DataAccessException.class, exception);
+            Assertions.assertEquals(exception.StatusCode(), 401);
         }
     }
 
@@ -116,6 +119,49 @@ public class TestService {
             GameData game = new GameData(0, null, null, "I will win", null);
             var gameID = service.createGame(game, auth);
             Assertions.assertNotNull(service.getGame(gameID));
+        } catch (DataAccessException exception) {
+            fail(exception.getMessage());
+        }
+    }
+
+    @Test
+    public void createGameFailBadAuth() {
+        try {
+            service.register(startingUser);
+            service.login(startingUser);
+            GameData game = new GameData(0, null, null, "I will win", null);
+            service.createGame(game, new AuthData("45", "bob"));
+            fail("should have thrown exception for bad Auth");
+        } catch (DataAccessException exception) {
+            Assertions.assertInstanceOf(DataAccessException.class, exception);
+            Assertions.assertEquals(exception.StatusCode(), 401);
+        }
+    }
+
+    @Test
+    public void createGameFailNoName() {
+        try {
+            service.register(startingUser);
+            var auth = service.login(startingUser);
+            GameData game = new GameData(0, null, null, null, null);
+            service.createGame(game, auth);
+            fail("should have thrown exception for bad request");
+        } catch (DataAccessException exception) {
+            Assertions.assertInstanceOf(DataAccessException.class, exception);
+            Assertions.assertEquals(exception.StatusCode(), 400);
+        }
+    }
+
+    @Test
+    public void joinCreatedGameSuccess() {
+        try {
+            service.register(startingUser);
+            var auth = service.login(startingUser);
+            GameData game = new GameData(0, null, null, "Test", null);
+            int gameID = service.createGame(game, auth);
+            service.joinGame(new JoinRequest("WHITE", gameID), auth);
+            GameData updatedGame = service.getGame(gameID);
+            Assertions.assertEquals(updatedGame.whiteUsername(), startingUser.username());
         } catch (DataAccessException exception) {
             fail(exception.getMessage());
         }

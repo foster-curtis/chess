@@ -31,32 +31,46 @@ public class ChessService {
     // Game Services
 
     public Collection<GameData> listGames(AuthData authData) throws DataAccessException {
-        var auth = authAccess.getAuth(authData);
-        if (auth == null) {
-            throw new DataAccessException("unauthorized", 401);
-        } else {
-            return null;
-        }
+        authenticate(authData);
+        return null;
     }
 
     public int createGame(GameData gameData, AuthData authData) throws DataAccessException {
-        if (authData == null) {
+        if (gameData.gameName() == null) {
             throw new DataAccessException("bad request", 400);
         }
-        var auth = authAccess.getAuth(authData);
-        if (auth == null) {
-            throw new DataAccessException("unauthorized", 401);
-        } else {
-            int gameID = new Random().nextInt();
-            ChessGame game = new ChessGame();
-            GameData newGame = new GameData(gameID, null, null, gameData.gameName(), game);
-            gameAccess.createGame(newGame);
-            return gameID;
-        }
+        authenticate(authData);
+        int gameID = Math.abs(new Random().nextInt());
+        ChessGame game = new ChessGame();
+        GameData newGame = new GameData(gameID, null, null, gameData.gameName(), game);
+        gameAccess.createGame(newGame);
+        return gameID;
     }
 
-    public void joinGame(GameData gameData, AuthData authData) {
-
+    public void joinGame(JoinRequest req, AuthData authData) throws DataAccessException {
+        var auth = authenticate(authData);
+        if (req.playerColor() == null) {
+            throw new DataAccessException("bad request", 400);
+        }
+        GameData game = gameAccess.getGame(req.gameID());
+        if (game == null) {
+            throw new DataAccessException("game not found", 500);
+        }
+        if (req.playerColor().equals("BLACK")) {
+            if (game.blackUsername() != null) {
+                throw new DataAccessException("already taken", 403);
+            } else {
+                var newGame = new GameData(game.gameID(), game.whiteUsername(), auth.username(), game.gameName(), game.game());
+                gameAccess.updateGame(newGame);
+            }
+        } else {
+            if (game.whiteUsername() != null) {
+                throw new DataAccessException("already taken", 403);
+            } else {
+                var newGame = new GameData(game.gameID(), auth.username(), game.blackUsername(), game.gameName(), game.game());
+                gameAccess.updateGame(newGame);
+            }
+        }
     }
 
     // User Services
@@ -82,12 +96,19 @@ public class ChessService {
     }
 
     public void logout(AuthData authData) throws DataAccessException {
+        authenticate(authData);
+        authAccess.deleteAuth(authData);
+    }
+
+    private AuthData authenticate(AuthData authData) throws DataAccessException {
+        if (authData == null) {
+            throw new DataAccessException("bad request", 400);
+        }
         var auth = authAccess.getAuth(authData);
         if (auth == null) {
             throw new DataAccessException("unauthorized", 401);
-        } else {
-            authAccess.deleteAuth(authData);
         }
+        return auth;
     }
 
     public AuthData getAuth(AuthData auth) throws DataAccessException {

@@ -1,7 +1,6 @@
 package dataaccess;
 
 import model.GameData;
-import model.UserData;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,13 +29,12 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(GameData gameData, UserData user) throws DataAccessException {
-//        var oldGame = gameMap.get(String.valueOf(gameData.gameID()));
-//        var newGame = new GameData(oldGame.gameID(), )
+    public void updateGame(GameData gameData) throws DataAccessException {
+        gameMap.put(String.valueOf(gameData.gameID()), gameData);
     }
 
     @Override
     public void clear() {
-
+        gameMap.clear();
     }
 }
