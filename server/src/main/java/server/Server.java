@@ -102,10 +102,9 @@ public class Server {
     }
 
     private Object listGamesHandler(Request req, Response res) throws DataAccessException {
-//        AuthData auth = new AuthData(req.headers("authorization"), null);
-//        Collection<GameData> games = service.listGames(auth);
-//        return new Gson().toJson(Map.of("games", games));
-        return null;
+        AuthData auth = new AuthData(req.headers("authorization"), null);
+        Collection<GameData> games = service.listGames(auth);
+        return new Gson().toJson(Map.of("games", games));
     }
 
     private Object createGameHandler(Request req, Response res) throws DataAccessException {

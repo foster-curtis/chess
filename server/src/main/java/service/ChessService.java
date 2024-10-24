@@ -32,7 +32,7 @@ public class ChessService {
 
     public Collection<GameData> listGames(AuthData authData) throws DataAccessException {
         authenticate(authData);
-        return null;
+        return gameAccess.listGames();
     }
 
     public int createGame(GameData gameData, AuthData authData) throws DataAccessException {

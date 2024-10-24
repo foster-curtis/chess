@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import spark.utils.Assert;
 
+import java.util.Collection;
+
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestService {
@@ -194,6 +196,45 @@ public class TestService {
         } catch (DataAccessException exception) {
             Assertions.assertInstanceOf(DataAccessException.class, exception);
             Assertions.assertEquals(exception.StatusCode(), 403);
+        }
+    }
+
+    @Test
+    public void listMultipleGamesSuccess() {
+        try {
+            service.register(startingUser);
+            var auth = service.login(startingUser);
+            GameData game1 = new GameData(0, null, null, "I will win", null);
+            var gameID = service.createGame(game1, auth);
+            GameData game2 = new GameData(0, null, null, "This ain't  a joke", null);
+            var game2ID = service.createGame(game2, auth);
+            Assertions.assertNotNull(service.getGame(gameID));
+            Assertions.assertNotNull(service.getGame(game2ID));
+
+            Collection<GameData> games = service.listGames(auth);
+            Assertions.assertEquals(2, games.size());
+        } catch (DataAccessException exception) {
+            fail(exception.getMessage());
+        }
+    }
+
+    @Test
+    public void listMultipleGamesBadAuthFail() {
+        try {
+            service.register(startingUser);
+            var auth = service.login(startingUser);
+            GameData game1 = new GameData(0, null, null, "I will win", null);
+            var gameID = service.createGame(game1, auth);
+            GameData game2 = new GameData(0, null, null, "This ain't  a joke", null);
+            var game2ID = service.createGame(game2, auth);
+            Assertions.assertNotNull(service.getGame(gameID));
+            Assertions.assertNotNull(service.getGame(game2ID));
+
+            Collection<GameData> games = service.listGames(new AuthData("23234", "yello"));
+            fail("should have thrown unauthorized exception");
+        } catch (DataAccessException exception) {
+            Assertions.assertInstanceOf(DataAccessException.class, exception);
+            Assertions.assertEquals(exception.StatusCode(), 401);
         }
     }
 
