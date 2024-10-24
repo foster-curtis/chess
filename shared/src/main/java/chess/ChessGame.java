@@ -155,11 +155,8 @@ public class ChessGame {
                     if (piece == null) {
                         continue;
                     }
-                    if (piece.getTeamColor() == teamColor) {
-                        Collection<ChessMove> possibleMoves = piece.pieceMoves(gameBoard, new ChessPosition(row, col));
-                        if (!checkmateHelper(possibleMoves, teamColor)) {
-                            return false;
-                        }
+                    if (!checkmateHelper2(piece, teamColor, row, col)) {
+                        return false;
                     }
                 }
             }
@@ -167,6 +164,14 @@ public class ChessGame {
         } else {
             return false;
         }
+    }
+
+    private boolean checkmateHelper2(ChessPiece piece, TeamColor teamColor, int row, int col) {
+        if (piece.getTeamColor() == teamColor) {
+            Collection<ChessMove> possibleMoves = piece.pieceMoves(gameBoard, new ChessPosition(row, col));
+            return checkmateHelper(possibleMoves, teamColor);
+        }
+        return true;
     }
 
     private boolean checkmateHelper(Collection<ChessMove> possibleMoves, TeamColor teamColor) {
