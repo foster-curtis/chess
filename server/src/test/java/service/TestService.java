@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
 import org.junit.jupiter.api.Test;
-import spark.utils.Assert;
 
 import java.util.Collection;
 
@@ -69,7 +68,7 @@ public class TestService {
             fail("Logged user in with wrong password");
         } catch (DataAccessException exception) {
             Assertions.assertInstanceOf(DataAccessException.class, exception);
-            Assertions.assertEquals(exception.StatusCode(), 401);
+            Assertions.assertEquals(exception.statusCode(), 401);
         }
     }
 
@@ -82,7 +81,7 @@ public class TestService {
             fail("Logged user in with wrong password");
         } catch (DataAccessException exception) {
             Assertions.assertInstanceOf(DataAccessException.class, exception);
-            Assertions.assertEquals(exception.StatusCode(), 401);
+            Assertions.assertEquals(exception.statusCode(), 401);
         }
     }
 
@@ -95,7 +94,7 @@ public class TestService {
             fail("did not throw exception with an invalid authToken");
         } catch (DataAccessException exception) {
             Assertions.assertInstanceOf(DataAccessException.class, exception);
-            Assertions.assertEquals(exception.StatusCode(), 401);
+            Assertions.assertEquals(exception.statusCode(), 401);
         }
     }
 
@@ -109,7 +108,7 @@ public class TestService {
             fail("did not throw exception for getAuth");
         } catch (DataAccessException exception) {
             Assertions.assertInstanceOf(DataAccessException.class, exception);
-            Assertions.assertEquals(exception.StatusCode(), 401);
+            Assertions.assertEquals(exception.statusCode(), 401);
         }
     }
 
@@ -136,7 +135,7 @@ public class TestService {
             fail("should have thrown exception for bad Auth");
         } catch (DataAccessException exception) {
             Assertions.assertInstanceOf(DataAccessException.class, exception);
-            Assertions.assertEquals(exception.StatusCode(), 401);
+            Assertions.assertEquals(exception.statusCode(), 401);
         }
     }
 
@@ -150,7 +149,7 @@ public class TestService {
             fail("should have thrown exception for bad request");
         } catch (DataAccessException exception) {
             Assertions.assertInstanceOf(DataAccessException.class, exception);
-            Assertions.assertEquals(exception.StatusCode(), 400);
+            Assertions.assertEquals(exception.statusCode(), 400);
         }
     }
 
@@ -180,7 +179,7 @@ public class TestService {
             fail("should have thrown an exception for no color");
         } catch (DataAccessException exception) {
             Assertions.assertInstanceOf(DataAccessException.class, exception);
-            Assertions.assertEquals(exception.StatusCode(), 400);
+            Assertions.assertEquals(exception.statusCode(), 400);
         }
     }
 
@@ -195,7 +194,7 @@ public class TestService {
             fail("should have thrown an exception for already taken");
         } catch (DataAccessException exception) {
             Assertions.assertInstanceOf(DataAccessException.class, exception);
-            Assertions.assertEquals(exception.StatusCode(), 403);
+            Assertions.assertEquals(exception.statusCode(), 403);
         }
     }
 
@@ -230,11 +229,11 @@ public class TestService {
             Assertions.assertNotNull(service.getGame(gameID));
             Assertions.assertNotNull(service.getGame(game2ID));
 
-            Collection<GameData> games = service.listGames(new AuthData("23234", "yello"));
+            service.listGames(new AuthData("23234", "yellow"));
             fail("should have thrown unauthorized exception");
         } catch (DataAccessException exception) {
             Assertions.assertInstanceOf(DataAccessException.class, exception);
-            Assertions.assertEquals(exception.StatusCode(), 401);
+            Assertions.assertEquals(exception.statusCode(), 401);
         }
     }
 

@@ -1,4 +1,4 @@
-package chess.moveCalculators;
+package chess.movecalculators;
 
 import chess.ChessBoard;
 import chess.ChessGame;
@@ -8,22 +8,14 @@ import chess.ChessPosition;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class QueenMoveCalculator extends MoveCalculator {
-    public QueenMoveCalculator(ChessPosition start, ChessGame.TeamColor pieceColor, ChessBoard board) {
+public class RookMoveCalculator extends MoveCalculator {
+    public RookMoveCalculator(ChessPosition start, ChessGame.TeamColor pieceColor, ChessBoard board) {
         super(start, pieceColor, board);
     }
 
     @Override
     public Collection<ChessMove> calculateMoves() {
         Collection<ChessMove> moves = new ArrayList<>();
-        // Direction = up and right
-        moves.addAll(this.checkOneDirection(1, 1, 10));
-        // Direction = up and left
-        moves.addAll(this.checkOneDirection(1, -1, 10));
-        // Direction = down and right
-        moves.addAll(this.checkOneDirection(-1, 1, 10));
-        // Direction = down and left
-        moves.addAll(this.checkOneDirection(-1, -1, 10));
         // Direction = up
         moves.addAll(this.checkOneDirection(1, 0, 10));
         // Direction = left

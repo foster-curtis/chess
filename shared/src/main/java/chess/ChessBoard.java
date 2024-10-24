@@ -28,7 +28,8 @@ public class ChessBoard {
         if (move.getPromotionPiece() == null) {
             board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = piece;
         } else {
-            board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+            var newPiece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+            board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = newPiece;
         }
     }
 
@@ -91,8 +92,12 @@ public class ChessBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ChessBoard that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ChessBoard that)) {
+            return false;
+        }
         return Objects.deepEquals(board, that.board);
     }
 

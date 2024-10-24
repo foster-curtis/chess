@@ -121,13 +121,21 @@ public class ChessGame {
                     continue;
                 }
                 if (piece.getTeamColor() != teamColor) {
-                    Collection<ChessMove> moves = gameBoard.getPiece(new ChessPosition(row, col)).pieceMoves(gameBoard, new ChessPosition(row, col));
-                    for (var move : moves) {
-                        if (move.threatensKing) {
-                            return true;
-                        }
+                    var pos = new ChessPosition(row, col);
+                    Collection<ChessMove> moves = gameBoard.getPiece(pos).pieceMoves(gameBoard, pos);
+                    if (checkHelper(moves)) {
+                        return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkHelper(Collection<ChessMove> moves) {
+        for (var move : moves) {
+            if (move.threatensKing) {
+                return true;
             }
         }
         return false;
@@ -149,16 +157,8 @@ public class ChessGame {
                     }
                     if (piece.getTeamColor() == teamColor) {
                         Collection<ChessMove> possibleMoves = piece.pieceMoves(gameBoard, new ChessPosition(row, col));
-                        for (var move : possibleMoves) {
-                            ChessPiece capturedPiece = null;
-                            if (gameBoard.getPiece(move.getEndPosition()) != null) {
-                                capturedPiece = gameBoard.getPiece(move.getEndPosition());
-                            }
-                            gameBoard.makeMove(move);
-                            if (!isInCheck(teamColor)) {
-                                return false;
-                            }
-                            gameBoard.undoMove(move, capturedPiece);
+                        if (!checkmateHelper(possibleMoves, teamColor)) {
+                            return false;
                         }
                     }
                 }
@@ -167,6 +167,21 @@ public class ChessGame {
         } else {
             return false;
         }
+    }
+
+    private boolean checkmateHelper(Collection<ChessMove> possibleMoves, TeamColor teamColor) {
+        for (var move : possibleMoves) {
+            ChessPiece capturedPiece = null;
+            if (gameBoard.getPiece(move.getEndPosition()) != null) {
+                capturedPiece = gameBoard.getPiece(move.getEndPosition());
+            }
+            gameBoard.makeMove(move);
+            if (!isInCheck(teamColor)) {
+                return false;
+            }
+            gameBoard.undoMove(move, capturedPiece);
+        }
+        return true;
     }
 
     /**

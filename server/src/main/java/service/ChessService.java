@@ -49,7 +49,7 @@ public class ChessService {
 
     public void joinGame(JoinRequest req, AuthData authData) throws DataAccessException {
         var auth = authenticate(authData);
-        if (req.playerColor() == null) {
+        if (req.playerColor() == null || req.gameID() == null) {
             throw new DataAccessException("bad request", 400);
         }
         GameData game = gameAccess.getGame(req.gameID());

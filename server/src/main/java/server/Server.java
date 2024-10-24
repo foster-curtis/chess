@@ -11,7 +11,6 @@ import service.ChessService;
 import service.ResponseException;
 import spark.*;
 
-import javax.xml.crypto.Data;
 import java.util.Collection;
 import java.util.Map;
 
@@ -66,7 +65,7 @@ public class Server {
         var body = new Gson().toJson(Map.of("message", String.format("Error: %s", exception.getMessage())));
         res.type("application/json");
         if (exception instanceof DataAccessException) {
-            res.status(((DataAccessException) exception).StatusCode());
+            res.status(((DataAccessException) exception).statusCode());
         } else if (exception instanceof ResponseException) {
             res.status(((ResponseException) exception).status());
         } else {
