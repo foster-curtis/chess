@@ -81,7 +81,7 @@ public class Server {
         return new Gson().toJson(auth);
     }
 
-    private Object clearHandler(Request req, Response res) {
+    private Object clearHandler(Request req, Response res) throws DataAccessException {
         service.clear();
         //Return empty JsonObject
         return new Gson().toJson(new JsonObject());

@@ -4,6 +4,10 @@ import model.AuthData;
 import model.UserData;
 
 public class DBAuthDAO extends SqlConfig implements AuthDAO {
+    public DBAuthDAO() throws DataAccessException {
+        configureDatabase();
+    }
+
     @Override
     public AuthData createAuth(UserData userData, String authToken) throws DataAccessException {
         return null;
@@ -20,7 +24,7 @@ public class DBAuthDAO extends SqlConfig implements AuthDAO {
     }
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException {
 
     }
 }

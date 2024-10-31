@@ -6,8 +6,12 @@ import java.util.Collection;
 import java.util.List;
 
 public class DBGameDAO extends SqlConfig implements GameDAO {
+    public DBGameDAO() throws DataAccessException {
+        configureDatabase();
+    }
+
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException {
 
     }
 

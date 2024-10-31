@@ -22,7 +22,7 @@ public class ChessService {
 
     // Clear
 
-    public void clear() {
+    public void clear() throws DataAccessException {
         userAccess.clear();
         gameAccess.clear();
         authAccess.clear();

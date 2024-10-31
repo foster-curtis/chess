@@ -2,5 +2,5 @@ package dataaccess;
 
 public interface DataAccess {
 
-    void clear();
+    void clear() throws DataAccessException;
 }
