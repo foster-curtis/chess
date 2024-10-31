@@ -391,6 +391,19 @@ What is it?
   - Generate Salt? haha
   - The TA's will run a test to make sure you are serializing your passwords! So do it.
 
+
+## Preparing for Phase 5
+### CLI: Command Line Interface
+- Mostly just call a command and get a response
+- REPL = Read, Evaluate, Print, Loop -> A continuously runnning program in the console that updates based on compute state or user interaction
+  - **This is what we will do for chess!**
+- Look at the Tic Tac Toe example to get an idea of how we will do this for chess
+### Chess phase 5: PreGame
+- Everything up until you would start the game
+- Typing help would print out possible commands based on the player state (logged in or not, playing a game or not)
+
+
+
   
  
 
