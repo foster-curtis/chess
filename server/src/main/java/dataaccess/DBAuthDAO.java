@@ -3,7 +3,7 @@ package dataaccess;
 import model.AuthData;
 import model.UserData;
 
-public class DBAuthDAO implements AuthDAO {
+public class DBAuthDAO extends SqlConfig implements AuthDAO {
     @Override
     public AuthData createAuth(UserData userData, String authToken) throws DataAccessException {
         return null;

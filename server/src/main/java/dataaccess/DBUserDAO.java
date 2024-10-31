@@ -2,7 +2,11 @@ package dataaccess;
 
 import model.UserData;
 
-public class DBUserDAO implements UserDAO {
+public class DBUserDAO extends SqlConfig implements UserDAO {
+    public DBUserDAO() throws DataAccessException {
+        configureDatabase();
+    }
+
     @Override
     public UserData getUser(UserData userData) throws DataAccessException {
         return null;
