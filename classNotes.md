@@ -371,6 +371,25 @@ Uncle Bob S.O.L.I.D:
 - Use UUID for a db key for users and maybe games? It meets all of the criteria, and has some useful implementation effects.
   -> or not, because SQL has built in functionality to assign keys and return them
 
+## JDBC
+What is it?
+  - Java code connecting over the network to a database
+  - Pull it down from Maven to connect it to your project
+  - Three steps:
+    1. Get a connection
+    2. Prepare a statement
+    3. Run
+  - Try blocks w/ no catch statement is a "try with resources" block. This will call the `close()` method on all open resources when the block is finished.
+  - Use `prepareStatement(vars)` with question marks to keep data safe. Then use `preparedStatement.setInt(index, var)`, remembering that indexes are 1-based and the `setInt` function can be replaced with a setter for any type.
+  ### During Startup
+  - `CREATE DATABASE IF NOT EXISTS chess`
+  - `CREATE TABLE IF NOT EXISTS games ( x... )`
+  - Look at petShop code `MySqlDataAccess`. It's got some really useful ideas!
+
+  ### Securing Passwords
+  - Bring in mindrot bcrypt from Maven
+  - Generate Salt? haha
+  - The TA's will run a test to make sure you are serializing your passwords! So do it.
 
   
  
