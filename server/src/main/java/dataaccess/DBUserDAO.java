@@ -1,6 +1,5 @@
 package dataaccess;
 
-import com.google.gson.Gson;
 import model.UserData;
 
 public class DBUserDAO extends SqlConfig implements UserDAO {

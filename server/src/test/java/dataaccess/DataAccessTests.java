@@ -9,10 +9,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class DataAccessTests {
     private DBUserDAO userAccess;
+    private DBAuthDAO authAccess;
     private UserData user;
 
     public DataAccessTests() {
         try {
+            this.authAccess = new DBAuthDAO();
             this.userAccess = new DBUserDAO();
             this.user = new UserData("bob", "12345", "email@email.com");
         } catch (DataAccessException e) {
@@ -24,6 +26,7 @@ public class DataAccessTests {
     public void setup() {
         try {
             userAccess.clear();
+            authAccess.clear();
         } catch (DataAccessException e) {
             fail(e.getMessage());
         }
@@ -33,6 +36,7 @@ public class DataAccessTests {
     public void testDBandTableCreation() {
         try {
             new DBUserDAO();
+
         } catch (DataAccessException e) {
             fail(e.getMessage());
         }
@@ -69,5 +73,35 @@ public class DataAccessTests {
         } catch (DataAccessException e) {
             fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void testCreateAuth() {
+
+    }
+
+    @Test
+    public void testCreateAuthFail() {
+
+    }
+
+    @Test
+    public void testGetAuth() {
+
+    }
+
+    @Test
+    public void testGetAuthFail() {
+
+    }
+
+    @Test
+    public void testDeleteAuth() {
+
+    }
+
+    @Test
+    public void testDeleteAuthFail() {
+
     }
 }

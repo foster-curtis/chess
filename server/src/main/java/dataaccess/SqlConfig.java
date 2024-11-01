@@ -7,7 +7,7 @@ import static java.sql.Types.NULL;
 
 public abstract class SqlConfig {
 
-    private final String[] createStatements = {
+    private final String[] createUserStatements = {
             """
             CREATE TABLE IF NOT EXISTS  users (
               `username` varchar(256) NOT NULL,
@@ -20,10 +20,47 @@ public abstract class SqlConfig {
             """
     };
 
+    private final String[] createAuthStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS authentication (
+              `username` varchar(256) NOT NULL,
+              `authToken` varchar(36) NOT NULL,
+              PRIMARY KEY (`authToken`),
+              INDEX(username),
+              INDEX(authToken)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
+
+    private final String[] createGameStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS games (
+              `gameID` int NOT NULL AUTO_INCREMENT,
+              `whiteUsername` varchar(256),
+              `blackUsername` varchar(256),
+              `gameName` varchar(256) NOT NULL DEFAULT 'Game X',
+              `chessGame` JSON NOT NULL,
+              PRIMARY KEY (`gameID`),
+              INDEX(whiteUsername),
+              INDEX(blackUsername)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
+
     public void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
+            for (var statement : createUserStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+            for (var statement : createAuthStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+            for (var statement : createGameStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
