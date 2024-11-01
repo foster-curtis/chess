@@ -12,7 +12,8 @@ public class DBGameDAO extends SqlConfig implements GameDAO {
 
     @Override
     public void clear() throws DataAccessException {
-
+        String statement = "TRUNCATE TABLE games";
+        executeUpdate(statement);
     }
 
     @Override

@@ -25,6 +25,7 @@ public class DBAuthDAO extends SqlConfig implements AuthDAO {
 
     @Override
     public void clear() throws DataAccessException {
-
+        String statement = "TRUNCATE TABLE authentication";
+        executeUpdate(statement);
     }
 }

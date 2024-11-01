@@ -49,4 +49,25 @@ public class DataAccessTests {
         UserData badUser = new UserData(null, null, null);
         Assertions.assertThrows(DataAccessException.class, () -> userAccess.createUser(badUser));
     }
+
+    @Test
+    public void testGetUserSuccess() {
+        Assertions.assertDoesNotThrow(() -> userAccess.createUser(user));
+        try {
+            Assertions.assertEquals(user, userAccess.getUser(user));
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testGetUserFail() {
+        UserData badUser = new UserData("jimmy", null, null);
+        Assertions.assertDoesNotThrow(() -> userAccess.createUser(user));
+        try {
+            Assertions.assertNull(userAccess.getUser(badUser));
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        }
+    }
 }

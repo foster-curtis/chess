@@ -10,21 +10,22 @@ public class DBUserDAO extends SqlConfig implements UserDAO {
 
     @Override
     public UserData getUser(UserData userData) throws DataAccessException {
-        //try (var conn = DatabaseManager.getConnection()) {
-        //var statement = "SELECT id, json FROM pet WHERE id=?";
-        String statement = "SELECT * FROM users WHERE username = (username) VALUES (?)";
-//            try (var ps = conn.prepareStatement(statement)) {
-//                ps.setInt(1, id);
-//                try (var rs = ps.executeQuery()) {
-//                    if (rs.next()) {
-//                        return readPet(rs);
-//                    }
-//                }
-//            }
-//        } catch (Exception e) {
-//            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
-//        }
-//        return null;
+        try (var conn = DatabaseManager.getConnection()) {
+            String statement = "SELECT * FROM users WHERE username = ?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, userData.username());
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        var username = rs.getString("username");
+                        var password = rs.getString("password");
+                        var email = rs.getString("email");
+                        return new UserData(username, password, email);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()), 500);
+        }
         return null;
     }
 
