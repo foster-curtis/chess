@@ -3,8 +3,8 @@ package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
-import model.UserData;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class DBGameDAO extends SqlConfig implements GameDAO {
@@ -37,10 +37,10 @@ public class DBGameDAO extends SqlConfig implements GameDAO {
             String statement = "SELECT * FROM games";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
-                    Collection<GameData> games = new java.util.ArrayList<>();
+                    ArrayList<GameData> games = new java.util.ArrayList<>();
                     while (rs.next()) {
                         var gameID = rs.getInt("gameID");
-                        var white = rs.getString("whitsUsername");
+                        var white = rs.getString("whiteUsername");
                         var black = rs.getString("blackUsername");
                         var name = rs.getString("gameName");
                         var game = new Gson().fromJson(rs.getString("chessGame"), ChessGame.class);
@@ -63,7 +63,7 @@ public class DBGameDAO extends SqlConfig implements GameDAO {
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
                         var id = rs.getInt("gameID");
-                        var white = rs.getString("whitsUsername");
+                        var white = rs.getString("whiteUsername");
                         var black = rs.getString("blackUsername");
                         var name = rs.getString("gameName");
                         var game = new Gson().fromJson(rs.getString("chessGame"), ChessGame.class);

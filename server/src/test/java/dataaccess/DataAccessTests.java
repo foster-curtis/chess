@@ -7,8 +7,9 @@ import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -37,6 +38,7 @@ public class DataAccessTests {
         try {
             userAccess.clear();
             authAccess.clear();
+            gameAccess.clear();
         } catch (DataAccessException e) {
             fail(e.getMessage());
         }
@@ -158,12 +160,51 @@ public class DataAccessTests {
 
     @Test
     public void testGetGame() {
-        Assertions.assertTrue(true);
+        try {
+            int gameID = gameAccess.createGame(game);
+            GameData got = gameAccess.getGame(gameID);
+            Assertions.assertEquals(game.gameName(), got.gameName());
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        }
     }
 
     @Test
-    public void testBcrypt() {
-        var password = "hackmeIdareyou";
-        Assertions.assertEquals(password, "hackmeIdareyou");
+    public void testGetGameFail() {
+        try {
+            int gameID = gameAccess.createGame(game);
+            GameData got = gameAccess.getGame(25);
+            Assertions.assertNull(got);
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testListGames() {
+        GameData game2 = new GameData(0, null, null, "Chess Game 2", new ChessGame());
+        GameData game3 = new GameData(0, null, null, "Chess Game 3", new ChessGame());
+        Assertions.assertDoesNotThrow(() -> gameAccess.createGame(game));
+        Assertions.assertDoesNotThrow(() -> gameAccess.createGame(game2));
+        Assertions.assertDoesNotThrow(() -> gameAccess.createGame(game3));
+        try {
+            ArrayList<GameData> games = (ArrayList<GameData>) gameAccess.listGames();
+            ArrayList<GameData> test = new ArrayList<>(Arrays.asList(game, game2, game3));
+            Assertions.assertEquals(test.get(0).gameName(), games.get(0).gameName());
+            Assertions.assertEquals(test.get(1).gameName(), games.get(1).gameName());
+            Assertions.assertEquals(test.get(2).gameName(), games.get(2).gameName());
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testListGamesNull() {
+        try {
+            ArrayList<GameData> games = (ArrayList<GameData>) gameAccess.listGames();
+            Assertions.assertEquals(new ArrayList<>(), games);
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        }
     }
 }
