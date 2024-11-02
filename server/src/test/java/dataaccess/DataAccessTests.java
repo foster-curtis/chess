@@ -207,4 +207,28 @@ public class DataAccessTests {
             fail(e.getMessage());
         }
     }
+
+    @Test
+    public void testUpdateGame() {
+        try {
+            int gameID = gameAccess.createGame(game);
+            GameData newGame = new GameData(gameID, user.username(), null, "Chess Game", game.game());
+            gameAccess.updateGame(newGame);
+            GameData got = gameAccess.getGame(gameID);
+            Assertions.assertEquals(newGame.whiteUsername(), got.whiteUsername());
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testUpdateGameFail() {
+        try {
+            GameData game2 = new GameData(0, null, null, "Chess Game 2", new ChessGame());
+            gameAccess.createGame(game);
+            Assertions.assertDoesNotThrow(() -> gameAccess.updateGame(game2));
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        }
+    }
 }
