@@ -17,7 +17,8 @@ public class MemoryGameDAO implements GameDAO {
     @Override
     public int createGame(GameData gameData) throws DataAccessException {
         int gameID = Math.abs(new Random().nextInt());
-        gameMap.put(String.valueOf(gameID), new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game()));
+        var newGame = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+        gameMap.put(String.valueOf(gameID), newGame);
         return gameID;
     }
 

@@ -3,9 +3,25 @@ package dataaccess;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.sql.ResultSet;
+
 public class DBUserDAO extends SqlConfig implements UserDAO {
     public DBUserDAO() throws DataAccessException {
         configureDatabase();
+    }
+
+    private UserData loadUser(ResultSet rs, UserData userData) throws DataAccessException {
+        try {
+            var username = rs.getString("username");
+            var password = rs.getString("password");
+            var email = rs.getString("email");
+            if (!BCrypt.checkpw(userData.password(), password)) {
+                return new UserData(username, password, email);
+            }
+            return new UserData(username, userData.password(), email);
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()), 500);
+        }
     }
 
     @Override
@@ -16,13 +32,7 @@ public class DBUserDAO extends SqlConfig implements UserDAO {
                 ps.setString(1, userData.username());
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        var username = rs.getString("username");
-                        var password = rs.getString("password");
-                        var email = rs.getString("email");
-                        if (!BCrypt.checkpw(userData.password(), password)) {
-                            return new UserData(username, password, email);
-                        }
-                        return new UserData(username, userData.password(), email);
+                        return loadUser(rs, userData);
                     }
                 }
             }

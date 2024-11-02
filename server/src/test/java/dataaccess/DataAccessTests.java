@@ -106,7 +106,8 @@ public class DataAccessTests {
         UUID authToken = UUID.randomUUID();
         Assertions.assertDoesNotThrow(() -> authAccess.createAuth(user, String.valueOf(authToken)));
         try {
-            Assertions.assertEquals(new AuthData(String.valueOf(authToken), user.username()), authAccess.getAuth(new AuthData(String.valueOf(authToken), null)));
+            AuthData test = new AuthData(String.valueOf(authToken), user.username());
+            Assertions.assertEquals(test, authAccess.getAuth(new AuthData(String.valueOf(authToken), null)));
         } catch (DataAccessException e) {
             fail(e.getMessage());
         }
@@ -141,7 +142,8 @@ public class DataAccessTests {
         Assertions.assertDoesNotThrow(() -> authAccess.createAuth(user, String.valueOf(authToken)));
         try {
             authAccess.deleteAuth(new AuthData(String.valueOf(1234565), user.username()));
-            Assertions.assertEquals(new AuthData(String.valueOf(authToken), user.username()), authAccess.getAuth(new AuthData(String.valueOf(authToken), user.username())));
+            AuthData test = new AuthData(String.valueOf(authToken), user.username());
+            Assertions.assertEquals(test, authAccess.getAuth(new AuthData(String.valueOf(authToken), user.username())));
         } catch (DataAccessException e) {
             fail(e.getMessage());
         }
