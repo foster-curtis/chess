@@ -40,11 +40,9 @@ public class ChessService {
             throw new DataAccessException("bad request", 400);
         }
         authenticate(authData);
-        int gameID = Math.abs(new Random().nextInt());
         ChessGame game = new ChessGame();
-        GameData newGame = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
-        gameAccess.createGame(newGame);
-        return gameID;
+        GameData newGame = new GameData(0, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
+        return gameAccess.createGame(newGame);
     }
 
     public void joinGame(JoinRequest req, AuthData authData) throws DataAccessException {

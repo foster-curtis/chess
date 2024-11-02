@@ -5,6 +5,7 @@ import model.GameData;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Random;
 
 public class MemoryGameDAO implements GameDAO {
     private final HashMap<String, GameData> gameMap;
@@ -14,8 +15,10 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void createGame(GameData gameData) throws DataAccessException {
-        gameMap.put(String.valueOf(gameData.gameID()), gameData);
+    public int createGame(GameData gameData) throws DataAccessException {
+        int gameID = Math.abs(new Random().nextInt());
+        gameMap.put(String.valueOf(gameID), new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game()));
+        return gameID;
     }
 
     @Override

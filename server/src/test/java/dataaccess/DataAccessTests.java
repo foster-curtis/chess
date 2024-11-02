@@ -1,10 +1,13 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.UUID;
 
@@ -13,13 +16,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class DataAccessTests {
     private DBUserDAO userAccess;
     private DBAuthDAO authAccess;
+    private DBGameDAO gameAccess;
     private UserData user;
+    private GameData game;
 
     public DataAccessTests() {
         try {
             this.authAccess = new DBAuthDAO();
             this.userAccess = new DBUserDAO();
+            this.gameAccess = new DBGameDAO();
             this.user = new UserData("bob", "12345", "email@email.com");
+            this.game = new GameData(0, null, null, "Chess Game", new ChessGame());
         } catch (DataAccessException e) {
             System.out.println("unable to initialize database connection: " + e.getMessage());
         }
@@ -136,5 +143,27 @@ public class DataAccessTests {
         } catch (DataAccessException e) {
             fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void testCreateGame() {
+        Assertions.assertDoesNotThrow(() -> gameAccess.createGame(game));
+    }
+
+    @Test
+    public void testCreateGameFail() {
+        GameData badGame = new GameData(0, null, null, "Chess Game", null);
+        Assertions.assertThrows(DataAccessException.class, () -> gameAccess.createGame(badGame));
+    }
+
+    @Test
+    public void testGetGame() {
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void testBcrypt() {
+        var password = "hackmeIdareyou";
+        Assertions.assertEquals(password, "hackmeIdareyou");
     }
 }

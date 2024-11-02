@@ -2,10 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import model.*;
 import service.ChessService;
 import service.ResponseException;
@@ -18,10 +15,14 @@ public class Server {
     private final ChessService service;
 
     public Server() {
-        var auth = new MemoryAuthDAO();
-        var game = new MemoryGameDAO();
-        var user = new MemoryUserDAO();
-        service = new ChessService(game, user, auth);
+        try {
+            var auth = new DBAuthDAO();
+            var game = new DBGameDAO();
+            var user = new DBUserDAO();
+            service = new ChessService(game, user, auth);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public int run(int desiredPort) {

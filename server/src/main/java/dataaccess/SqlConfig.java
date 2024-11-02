@@ -39,7 +39,7 @@ public abstract class SqlConfig {
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
               `gameName` varchar(256) NOT NULL DEFAULT 'Game X',
-              `chessGame` JSON NOT NULL,
+              `chessGame` TEXT NOT NULL,
               PRIMARY KEY (`gameID`),
               INDEX(whiteUsername),
               INDEX(blackUsername)
