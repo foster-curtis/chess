@@ -1,9 +1,12 @@
 package dataaccess;
 
+import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -77,31 +80,61 @@ public class DataAccessTests {
 
     @Test
     public void testCreateAuth() {
-
+        UUID authToken = UUID.randomUUID();
+        Assertions.assertDoesNotThrow(() -> authAccess.createAuth(user, String.valueOf(authToken)));
     }
 
     @Test
     public void testCreateAuthFail() {
-
+        UUID authToken = UUID.randomUUID();
+        UserData badUser = new UserData(null, null, null);
+        Assertions.assertThrows(DataAccessException.class, () -> authAccess.createAuth(badUser, String.valueOf(authToken)));
+        Assertions.assertThrows(DataAccessException.class, () -> authAccess.createAuth(user, null));
     }
 
     @Test
     public void testGetAuth() {
-
+        UUID authToken = UUID.randomUUID();
+        Assertions.assertDoesNotThrow(() -> authAccess.createAuth(user, String.valueOf(authToken)));
+        try {
+            Assertions.assertEquals(new AuthData(String.valueOf(authToken), user.username()), authAccess.getAuth(new AuthData(String.valueOf(authToken), null)));
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        }
     }
 
     @Test
     public void testGetAuthFail() {
-
+        UUID authToken = UUID.randomUUID();
+        Assertions.assertDoesNotThrow(() -> authAccess.createAuth(user, String.valueOf(authToken)));
+        try {
+            Assertions.assertNull(authAccess.getAuth(new AuthData("12345", null)));
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        }
     }
 
     @Test
     public void testDeleteAuth() {
-
+        UUID authToken = UUID.randomUUID();
+        Assertions.assertDoesNotThrow(() -> authAccess.createAuth(user, String.valueOf(authToken)));
+        Assertions.assertDoesNotThrow(() -> authAccess.deleteAuth(new AuthData(String.valueOf(authToken), user.username())));
+        try {
+            Assertions.assertNull(authAccess.getAuth(new AuthData(String.valueOf(authToken), user.username())));
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        }
     }
 
     @Test
     public void testDeleteAuthFail() {
-
+        UUID authToken = UUID.randomUUID();
+        Assertions.assertDoesNotThrow(() -> authAccess.createAuth(user, String.valueOf(authToken)));
+        try {
+            authAccess.deleteAuth(new AuthData(String.valueOf(1234565), user.username()));
+            Assertions.assertEquals(new AuthData(String.valueOf(authToken), user.username()), authAccess.getAuth(new AuthData(String.valueOf(authToken), user.username())));
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        }
     }
 }
