@@ -403,8 +403,39 @@ What is it?
 - Typing help would print out possible commands based on the player state (logged in or not, playing a game or not)
 
 
+## Logging and Debugging
 
+#### What is Logging?
+- Logging is an external record of application execution of your users
   
+#### Benefits of Logging
+- Allows for efficient debugging: when a customer has a problem, you can go look at the log to see what they did and what went wrong
+- Security: Keep records of important actions --> is someone putting in 10,000 passwords?
+- Auditing
+- Performance Monitoring: Health of your system, data for request times
+  
+#### Desirable Logging Characteristics
+- Persistent: Data remains somewhere (whether in the console or somewhere else) so you can go find specific moments or calls
+- Immutable: Can't be changed--Read only
+- Aggregated: Should collect all the data from all parts of your service into one place
+- Accessible: Combine and sort data. You should be able ot find the information you're looking for quickly!
+- Performant: Speedy fast and optimized for your environment
+
+Log Levels:
+  - OFF
+  - SEVERE -> Take care of it immediately!
+  - WARNING -> Database latency increasing, Nearly out of storage
+  - INFO -> Depreated code being used, user logged in, etc.
+  - FINE----\
+  - FINER----)--> These are strange and not often used. If anything, only the FINE will be used to report function parameters or similar info.
+  - FINEST--/
+  - ALL
+
+#### DEBUGGING
+- First step!! Make sure that the expected output should acutally be the expected output! Check if the customer was actually right
+- Step Two: Recreate the problem/the user's input
+- Write Code to test your Code!!! You're a programmer! `@Test`
+- Give updates to the cusotmer
  
 
 
