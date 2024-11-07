@@ -437,6 +437,12 @@ Log Levels:
 - Write Code to test your Code!!! You're a programmer! `@Test`
 - Give updates to the cusotmer
  
+### Chess Websocket Connections
+- Make your connection when a user joins a game, not when they login
+- Websocket is not a request, response protocol! You must intentionally send messages both ways.
+- Don't call your websocket events from the Server, call them in the service--its business logic
+- An observer gets passed in to deeper layers of your server so that when a message comes back from the server, it knows where to send it back to.
+
 
 
 
