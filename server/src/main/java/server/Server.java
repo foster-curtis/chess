@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import dataaccess.*;
 import model.*;
 import service.ChessService;
-import service.ResponseException;
+import exception.ResponseException;
 import spark.*;
 
 import java.util.Collection;
