@@ -16,38 +16,26 @@ public class ServerFacade {
 
     public void clear() {
         String path = "/db";
-        this.makeRequest("DELETE", path, null, null);
+        this.makeRequest("DELETE", path, null, null, null);
     }
 
     public AuthData register(UserData user) {
         String path = "/user";
-        return this.makeRequest("POST", path, user, AuthData.class);
+        return this.makeRequest("POST", path, user, AuthData.class, null);
     }
 
     public AuthData login(UserData user) {
         String path = "/session";
-        return this.makeRequest("POST", path, user, AuthData.class);
+        return this.makeRequest("POST", path, user, AuthData.class, null);
     }
 
     public void logout(AuthData auth) {
         String path = "/session";
-        try {
-            URL url = (new URI("http://localhost:" + port + path)).toURL();
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();
-            http.setRequestMethod("DELETE");
-            http.setDoOutput(true);
-
-            writeBody(null, http);
-            http.setRequestProperty("Authorization", auth.authToken());
-            http.connect();
-            throwIfNotSuccessful(http);
-        } catch (Exception ex) {
-            throw new ResponseException(ex.getMessage(), 500);
-        }
+        this.makeRequest("DELETE", path, null, null, auth);
     }
 
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, AuthData auth) throws ResponseException {
         try {
             URL url = (new URI("http://localhost:" + port + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -55,6 +43,9 @@ public class ServerFacade {
             http.setDoOutput(true);
 
             writeBody(request, http);
+            if (auth != null) {
+                http.setRequestProperty("Authorization", auth.authToken());
+            }
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);

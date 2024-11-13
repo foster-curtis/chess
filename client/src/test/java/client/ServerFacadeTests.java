@@ -71,6 +71,9 @@ public class ServerFacadeTests {
 
     @Test
     public void testLogoutFail() {
-        ;
+        serverFacade.register(user);
+        serverFacade.login(user);
+        AuthData badAuth = new AuthData("1o2i3ihfkjhoqodjfhk1jh423hkjshuu2232", "qwerty");
+        Assertions.assertThrows(Exception.class, () -> serverFacade.logout(badAuth));
     }
 }
