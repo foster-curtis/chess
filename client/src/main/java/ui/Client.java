@@ -1,5 +1,8 @@
 package ui;
 
-public class Client {
+public interface Client {
 
+    String eval(String input);
+
+    String help();
 }
