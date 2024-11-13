@@ -69,4 +69,8 @@ public class ServerFacadeTests {
         Assertions.assertDoesNotThrow(() -> serverFacade.logout(auth));
     }
 
+    @Test
+    public void testLogoutFail() {
+        ;
+    }
 }

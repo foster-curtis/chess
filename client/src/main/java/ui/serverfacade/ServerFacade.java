@@ -31,7 +31,19 @@ public class ServerFacade {
 
     public void logout(AuthData auth) {
         String path = "/session";
-        this.makeRequest("DELETE", path, auth, null);
+        try {
+            URL url = (new URI("http://localhost:" + port + path)).toURL();
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            http.setRequestMethod("DELETE");
+            http.setDoOutput(true);
+
+            writeBody(null, http);
+            http.setRequestProperty("Authorization", auth.authToken());
+            http.connect();
+            throwIfNotSuccessful(http);
+        } catch (Exception ex) {
+            throw new ResponseException(ex.getMessage(), 500);
+        }
     }
 
 
