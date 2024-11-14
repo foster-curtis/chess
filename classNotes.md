@@ -443,6 +443,28 @@ Log Levels:
 - Don't call your websocket events from the Server, call them in the service--its business logic
 - An observer gets passed in to deeper layers of your server so that when a message comes back from the server, it knows where to send it back to.
 
+## Security and Hashing
+- Authentication: Who am I?
+- Authorization: What can I do?
+- Data Integrity: Non-Counterfeit
+- Non-Repudiation: Cannot contest ownership
+
+### Cryptographic Hashing:
+- Desired Hash Characteristics:
+  - Fixed-Size -> Always the same size
+  - Deterministic -> Same in, same out
+  - One-Way -> Can't get the original text
+  - Resistance to collisions -> One to one mapping
+  - Preimage resistance -> can't guess
+ 
+- Hash functions
+  - Bcrypt
+  - SHA-256
+
+
+## Encryption:
+- Encryption -> makes things unreadable
+- Decryption -> makes things readable again
 
 
 
