@@ -2,6 +2,8 @@ package ui;
 
 import java.util.Scanner;
 
+import static ui.EscapeSequences.*;
+
 public class Repl {
     public final Client client;
 
@@ -15,14 +17,19 @@ public class Repl {
         System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);
+        String result = "";
+        while (!result.equals("quit")) {
+            System.out.print("Type a command number: ");
+            String input = scanner.nextLine();
 
-        System.out.print("Enter your name: ");
-        String name = scanner.nextLine(); // Reading a line of text
-
-        System.out.print("Enter your age: ");
-        int age = scanner.nextInt(); // Reading an integer
-
-        System.out.println("Hello, " + name + "! You are " + age + " years old.");
+            try {
+                result = client.eval(input);
+                System.out.print(SET_TEXT_COLOR_BLUE + result);
+            } catch (Throwable e) {
+                var msg = e.toString();
+                System.out.print(SET_TEXT_COLOR_RED + msg);
+            }
+        }
 
         scanner.close();
     }

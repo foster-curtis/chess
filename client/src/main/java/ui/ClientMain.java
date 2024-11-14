@@ -1,17 +1,60 @@
 package ui;
 
+import model.*;
 import ui.serverfacade.ServerFacade;
+
+import java.util.HashMap;
+import java.util.Scanner;
 
 public class ClientMain implements Client {
     private final ServerFacade server;
+    private final Scanner scanner;
+    private final HashMap<String, AuthData> currentUserAuths;
 
     public ClientMain(int port) {
         this.server = new ServerFacade(port);
+        scanner = new Scanner(System.in);
+        currentUserAuths = new HashMap<>();
     }
 
     @Override
     public String eval(String input) {
+        return switch (input) {
+            case "2" -> quit();
+            case "3" -> login();
+            case "4" -> register();
+            default -> help();
+        };
+    }
+
+    private String quit() {
+        return "quit";
+    }
+
+    private String login() {
         return "";
+    }
+
+    private String register() {
+        System.out.print("""
+                Great, lets get you registered so you can play some chess!
+                Please enter your username, password, and email separated by spaces as shown:
+                    -> username Pa$$word email@email.com
+                """);
+        String[] fields = {};
+        while (true) {
+            String input = scanner.nextLine();
+            fields = input.split(" ");
+            if (fields.length != 3) {
+                System.out.println("Invalid input. Please fill all required fields (3), separated by spaces.");
+            } else {
+                break;
+            }
+        }
+        UserData user = new UserData(fields[0], fields[1], fields[2]);
+        AuthData auth = server.register(user);
+        currentUserAuths.put(user.username(), auth);
+        return "Welcome to the Chess Server, " + user.username() + "!";
     }
 
     @Override
