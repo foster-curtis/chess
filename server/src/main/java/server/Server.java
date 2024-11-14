@@ -73,7 +73,7 @@ public class Server {
             res.status(500);
         }
         res.body(body);
-        return body;
+        return res;
     }
 
     private Object registerUserHandler(Request req, Response res) throws DataAccessException {
@@ -111,7 +111,7 @@ public class Server {
         AuthData auth = new AuthData(req.headers("authorization"), null);
         var game = new Gson().fromJson(req.body(), GameData.class);
         int gameID = service.createGame(game, auth);
-        return new Gson().toJson(Map.of("gameID", gameID));
+        return new Gson().toJson(gameID);
     }
 
     private Object joinGameHandler(Request req, Response res) throws DataAccessException {

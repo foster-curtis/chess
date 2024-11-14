@@ -7,7 +7,7 @@ import static ui.EscapeSequences.*;
 
 public class Repl {
     public Client client;
-    private int port;
+    private final int port;
 
     public Repl(int port) {
         this.client = new ClientMain(port);
@@ -51,10 +51,10 @@ public class Repl {
 
         try {
             result = client.eval(input);
-            System.out.println(SET_TEXT_COLOR_BLUE + result);
+            System.out.println(result);
         } catch (Throwable e) {
             var msg = e.toString();
-            System.out.println(SET_TEXT_COLOR_RED + msg);
+            System.out.println(msg);
         }
         return result;
     }

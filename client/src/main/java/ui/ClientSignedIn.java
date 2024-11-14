@@ -1,19 +1,22 @@
 package ui;
 
 import model.AuthData;
+import model.GameData;
 import ui.serverfacade.ServerFacade;
 
-import java.util.HashMap;
+import java.util.Scanner;
 
 public class ClientSignedIn implements Client {
-    private ServerFacade server;
+    private final ServerFacade server;
     private State state;
     private final AuthData currentUserAuth;
+    private final Scanner scanner;
 
     public ClientSignedIn(int port, AuthData currUserAuth) {
         this.server = new ServerFacade(port);
         this.state = State.LOGGEDIN;
         currentUserAuth = currUserAuth;
+        scanner = new Scanner(System.in);
     }
 
     @Override
@@ -34,12 +37,27 @@ public class ClientSignedIn implements Client {
     }
 
     private String logout() {
-
-        return "";
+        try {
+            server.logout(currentUserAuth);
+            state = State.LOGGEDOUT;
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+        return "User " + currentUserAuth.username() + " successfully logged out";
     }
 
     private String createGame() {
-        return "";
+        System.out.println("Okay! What should the game name be?");
+        System.out.print(">>> ");
+        String input = scanner.nextLine();
+
+        try {
+            GameData game = new GameData(0, null, null, input, null);
+            int gameID = server.createGame(game, currentUserAuth);
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+        return "Game \"" + input + "\" created.";
     }
 
     private String listGames() {
@@ -57,7 +75,7 @@ public class ClientSignedIn implements Client {
     @Override
     public String help() {
         return """
-                Enter a number and press enter to execute a command!
+                Enter a number and press enter to execute a command:
                 
                  1. Help -> View list of available commands
                  2. Logout -> End this session

@@ -14,24 +14,37 @@ public class ServerFacade {
         this.port = port;
     }
 
-    public void clear() {
+    public void clear() throws ResponseException {
         String path = "/db";
         this.makeRequest("DELETE", path, null, null, null);
     }
 
-    public AuthData register(UserData user) {
+    public AuthData register(UserData user) throws ResponseException {
         String path = "/user";
         return this.makeRequest("POST", path, user, AuthData.class, null);
     }
 
-    public AuthData login(UserData user) {
+    public AuthData login(UserData user) throws ResponseException {
         String path = "/session";
         return this.makeRequest("POST", path, user, AuthData.class, null);
     }
 
-    public void logout(AuthData auth) {
+    public void logout(AuthData auth) throws ResponseException {
         String path = "/session";
         this.makeRequest("DELETE", path, null, null, auth);
+    }
+
+    public GameData[] listGames(AuthData auth) {
+        String path = "/game";
+        record listGamesResponse(GameData[] games) {
+        }
+        var res = this.makeRequest("GET", path, null, listGamesResponse.class, auth);
+        return res.games;
+    }
+
+    public int createGame(GameData game, AuthData auth) {
+        String path = "/game";
+        return this.makeRequest("POST", path, game, int.class, auth);
     }
 
 
@@ -42,10 +55,10 @@ public class ServerFacade {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            writeBody(request, http);
             if (auth != null) {
                 http.setRequestProperty("Authorization", auth.authToken());
             }
+            writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
@@ -69,7 +82,7 @@ public class ServerFacade {
         var status = http.getResponseCode();
         var message = http.getResponseMessage();
         if (!isSuccessful(status)) {
-            throw new ResponseException(status + " failure: " + message, status);
+            throw new ResponseException(message, status);
         }
     }
 

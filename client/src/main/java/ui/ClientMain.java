@@ -3,7 +3,6 @@ package ui;
 import model.*;
 import ui.serverfacade.ServerFacade;
 
-import java.util.HashMap;
 import java.util.Scanner;
 
 
@@ -47,6 +46,7 @@ public class ClientMain implements Client {
         System.out.println("""
                 Please enter your username and password separated by spaces as shown:
                     -> username Pa$$word
+                >>> 
                 """);
         String[] fields;
         while (true) {
@@ -65,7 +65,7 @@ public class ClientMain implements Client {
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
-        return "Welcome back to the Chess Server, " + user.username() + "!";
+        return "Welcome back, " + user.username() + "!";
     }
 
     private String register() {
@@ -73,6 +73,7 @@ public class ClientMain implements Client {
                 Great, lets get you registered so you can play some chess!
                 Please enter your username, password, and email separated by spaces as shown:
                     -> username Pa$$word email@email.com
+                >>> 
                 """);
         String[] fields;
         while (true) {
@@ -97,7 +98,7 @@ public class ClientMain implements Client {
     @Override
     public String help() {
         return """
-                Enter a number and press enter to execute a command!
+                Enter a number and press enter to execute a command:
                 
                 1. Help -> View list of available commands
                 2. Quit -> Quit the program
