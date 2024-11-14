@@ -6,15 +6,27 @@ import ui.serverfacade.ServerFacade;
 import java.util.HashMap;
 import java.util.Scanner;
 
+
 public class ClientMain implements Client {
     private final ServerFacade server;
     private final Scanner scanner;
-    private final HashMap<String, AuthData> currentUserAuths;
+    private State state;
+    private AuthData currentUserAuth;
 
     public ClientMain(int port) {
         this.server = new ServerFacade(port);
         scanner = new Scanner(System.in);
-        currentUserAuths = new HashMap<>();
+        currentUserAuth = null;
+        state = State.LOGGEDOUT;
+    }
+
+    public AuthData getCurrentUserAuth() {
+        return currentUserAuth;
+    }
+
+    @Override
+    public State getState() {
+        return state;
     }
 
     @Override
@@ -32,7 +44,28 @@ public class ClientMain implements Client {
     }
 
     private String login() {
-        return "";
+        System.out.println("""
+                Please enter your username and password separated by spaces as shown:
+                    -> username Pa$$word
+                """);
+        String[] fields;
+        while (true) {
+            String input = scanner.nextLine();
+            fields = input.split(" ");
+            if (fields.length != 2) {
+                System.out.println("Invalid input. Please fill all required fields (2), separated by spaces.");
+            } else {
+                break;
+            }
+        }
+        UserData user = new UserData(fields[0], fields[1], null);
+        try {
+            currentUserAuth = server.login(user);
+            state = State.LOGGEDIN;
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+        return "Welcome back to the Chess Server, " + user.username() + "!";
     }
 
     private String register() {
@@ -41,7 +74,7 @@ public class ClientMain implements Client {
                 Please enter your username, password, and email separated by spaces as shown:
                     -> username Pa$$word email@email.com
                 """);
-        String[] fields = {};
+        String[] fields;
         while (true) {
             String input = scanner.nextLine();
             fields = input.split(" ");
@@ -52,8 +85,12 @@ public class ClientMain implements Client {
             }
         }
         UserData user = new UserData(fields[0], fields[1], fields[2]);
-        AuthData auth = server.register(user);
-        currentUserAuths.put(user.username(), auth);
+        try {
+            currentUserAuth = server.register(user);
+            state = State.LOGGEDIN;
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
         return "Welcome to the Chess Server, " + user.username() + "!";
     }
 

@@ -1,14 +1,17 @@
 package ui;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
 public class Repl {
-    public final Client client;
+    public Client client;
+    private int port;
 
     public Repl(int port) {
         this.client = new ClientMain(port);
+        this.port = port;
     }
 
     public void run() {
@@ -18,19 +21,41 @@ public class Repl {
 
         Scanner scanner = new Scanner(System.in);
         String result = "";
-        while (!result.equals("quit")) {
-            System.out.print("Type a command number: ");
-            String input = scanner.nextLine();
 
-            try {
-                result = client.eval(input);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
-            } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(SET_TEXT_COLOR_RED + msg);
+        while (true) {
+            this.client = new ClientMain(port);
+            while (client.getState() == State.LOGGEDOUT) {
+                result = loop(result, scanner);
+                if (Objects.equals(result, "quit")) {
+                    break;
+                }
+            }
+            if (Objects.equals(result, "quit")) {
+                break;
+            }
+            this.client = new ClientSignedIn(port, client.getCurrentUserAuth());
+            System.out.println("Now that you're logged in, you have some new commands available to you!");
+            System.out.println(client.help());
+
+            while (client.getState() == State.LOGGEDIN) {
+                result = loop(result, scanner);
             }
         }
 
         scanner.close();
+    }
+
+    private String loop(String result, Scanner scanner) {
+        System.out.print(">>> ");
+        String input = scanner.nextLine();
+
+        try {
+            result = client.eval(input);
+            System.out.println(SET_TEXT_COLOR_BLUE + result);
+        } catch (Throwable e) {
+            var msg = e.toString();
+            System.out.println(SET_TEXT_COLOR_RED + msg);
+        }
+        return result;
     }
 }

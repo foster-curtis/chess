@@ -4,7 +4,6 @@ import chess.ChessGame;
 import dataaccess.*;
 import model.*;
 
-import java.util.Random;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
