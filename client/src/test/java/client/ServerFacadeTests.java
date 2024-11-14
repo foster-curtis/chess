@@ -1,6 +1,7 @@
 package client;
 
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -12,6 +13,8 @@ public class ServerFacadeTests {
     private static Server server;
     private static ServerFacade serverFacade;
     private static UserData user;
+    private static UserData registeredUser;
+    private static AuthData validAuth;
 
     @BeforeAll
     public static void init() {
@@ -19,6 +22,7 @@ public class ServerFacadeTests {
         var port = server.run(0);
         serverFacade = new ServerFacade(port);
         user = new UserData("bobbette", "password", "em@il.com");
+        registeredUser = new UserData("bobby", "Password", "em@il.com");
         System.out.println("Started test HTTP server on " + port);
     }
 
@@ -30,6 +34,7 @@ public class ServerFacadeTests {
     @BeforeEach
     void setup() {
         serverFacade.clear();
+        validAuth = serverFacade.register(registeredUser);
     }
 
 
@@ -75,5 +80,17 @@ public class ServerFacadeTests {
         serverFacade.login(user);
         AuthData badAuth = new AuthData("1o2i3ihfkjhoqodjfhk1jh423hkjshuu2232", "qwerty");
         Assertions.assertThrows(Exception.class, () -> serverFacade.logout(badAuth));
+    }
+
+    @Test
+    public void testCreateGame() {
+        GameData game = new GameData(0, null, null, "name", null);
+        Assertions.assertInstanceOf(Integer.class, serverFacade.createGame(game, validAuth));
+    }
+
+    @Test
+    public void testCreatGameFail() {
+        GameData game = new GameData(0, null, null, null, null);
+        Assertions.assertThrows(Exception.class, () -> serverFacade.createGame(game, validAuth));
     }
 }

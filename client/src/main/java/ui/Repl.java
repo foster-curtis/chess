@@ -3,8 +3,6 @@ package ui;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static ui.EscapeSequences.*;
-
 public class Repl {
     public Client client;
     private final int port;

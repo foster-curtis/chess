@@ -46,8 +46,8 @@ public class ClientMain implements Client {
         System.out.println("""
                 Please enter your username and password separated by spaces as shown:
                     -> username Pa$$word
-                >>> 
                 """);
+        System.out.print(">>> ");
         String[] fields;
         while (true) {
             String input = scanner.nextLine();
@@ -73,8 +73,8 @@ public class ClientMain implements Client {
                 Great, lets get you registered so you can play some chess!
                 Please enter your username, password, and email separated by spaces as shown:
                     -> username Pa$$word email@email.com
-                >>> 
                 """);
+        System.out.print(">>> ");
         String[] fields;
         while (true) {
             String input = scanner.nextLine();
