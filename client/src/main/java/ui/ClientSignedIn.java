@@ -1,22 +1,25 @@
 package ui;
 
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
+import model.JoinRequest;
 import ui.serverfacade.ServerFacade;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class ClientSignedIn implements Client {
     private final ServerFacade server;
-    private State state;
+    private State state = State.LOGGEDIN;
     private final AuthData currentUserAuth;
-    private final Scanner scanner;
+    private final Scanner scanner = new Scanner(System.in);
+    private HashMap<Integer, Integer> gameMap = new HashMap<>();
+    private int numGames = 0;
 
     public ClientSignedIn(int port, AuthData currUserAuth) {
         this.server = new ServerFacade(port);
-        this.state = State.LOGGEDIN;
         currentUserAuth = currUserAuth;
-        scanner = new Scanner(System.in);
     }
 
     @Override
@@ -47,13 +50,15 @@ public class ClientSignedIn implements Client {
     }
 
     private String createGame() {
-        System.out.println("Okay! What should the game name be?");
+        System.out.println("Okay! Please input a game name: ");
         System.out.print(">>> ");
         String input = scanner.nextLine();
 
         try {
             GameData game = new GameData(0, null, null, input, null);
-            server.createGame(game, currentUserAuth);
+            int gameID = server.createGame(game, currentUserAuth);
+            numGames++;
+            gameMap.put(numGames, gameID);
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
@@ -63,6 +68,7 @@ public class ClientSignedIn implements Client {
     private String listGames() {
         GameData[] games = server.listGames(currentUserAuth);
         int gameNum = 1;
+        StringBuilder result = new StringBuilder();
         for (GameData game : games) {
             String white = game.whiteUsername();
             String black = game.blackUsername();
@@ -72,26 +78,49 @@ public class ClientSignedIn implements Client {
             if (black == null) {
                 black = "Available";
             }
-            System.out.println(gameNum + ": " + game.gameName() + "\nWhite: " + white + "\nBlack: " + black);
-            System.out.println();
+            result.append(gameNum).append(": ").append(game.gameName()).append("\nWhite: ");
+            result.append(white).append("\nBlack: ").append(black).append("\n\n");
+            gameMap.put(gameNum, game.gameID());
             gameNum += 1;
         }
-        return "";
+        return result.toString();
     }
 
     private String playGame() {
-        return "";
+        int num = getGameNum();
+        System.out.print("Desired player color: ");
+        String color = scanner.nextLine().toUpperCase();
+
+        int gameID = gameMap.get(num);
+        var req = new JoinRequest(color, gameID);
+        server.joinGame(req, currentUserAuth);
+        System.out.println("Successfully joined game " + num + " as " + color);
+        return new BoardUI(new ChessGame().getBoard()).displayBoard(color);
     }
 
     private String observeGame() {
-        return "";
+        int num = getGameNum();
+        System.out.println("Successfully joined game " + num + " as an observer.");
+        return new BoardUI(new ChessGame().getBoard()).displayBoard("WHITE");
+    }
+
+    private int getGameNum() {
+        int num = 0;
+        while (num == 0) {
+            System.out.print("Join game number: ");
+            String input = scanner.nextLine();
+            try {
+                num = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Must be a number. Please input a game number, not a game name.");
+            }
+        }
+        return num;
     }
 
     @Override
     public String help() {
         return """
-                Enter a number and press enter to execute a command:
-                
                  1. Help -> View list of available commands
                  2. Logout -> End this session
                  3. Create Game -> Create a new game

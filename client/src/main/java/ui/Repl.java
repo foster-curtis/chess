@@ -15,6 +15,7 @@ public class Repl {
     public void run() {
         System.out.println("♕ Welcome to Chess! ♕");
         System.out.println("Press enter at any time to view the help menu.");
+        System.out.println("\nType in a number and press enter to execute a command:");
         System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);
@@ -32,7 +33,7 @@ public class Repl {
                 break;
             }
             this.client = new ClientSignedIn(port, client.getCurrentUserAuth());
-            System.out.println("Now that you're logged in, you have some new commands available to you!");
+            System.out.println("Now that you're logged in, you have some new commands available!");
             System.out.println(client.help());
 
             while (client.getState() == State.LOGGEDIN) {
