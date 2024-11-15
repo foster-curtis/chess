@@ -2,6 +2,7 @@ package client;
 
 import model.AuthData;
 import model.GameData;
+import model.JoinRequest;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -92,5 +93,37 @@ public class ServerFacadeTests {
     public void testCreatGameFail() {
         GameData game = new GameData(0, null, null, null, null);
         Assertions.assertThrows(Exception.class, () -> serverFacade.createGame(game, validAuth));
+    }
+
+    @Test
+    public void testListGames() {
+        GameData game = new GameData(0, null, null, "name", null);
+        serverFacade.createGame(game, validAuth);
+        Assertions.assertInstanceOf(GameData[].class, serverFacade.listGames(validAuth));
+    }
+
+    @Test
+    public void testListGamesFail() {
+        GameData game = new GameData(0, null, null, "name", null);
+        serverFacade.createGame(game, validAuth);
+        Assertions.assertThrows(Exception.class, () -> serverFacade.listGames(new AuthData("12039938403", "102jajj")));
+    }
+
+    @Test
+    public void testJoinGame() {
+        GameData game = new GameData(0, null, null, "name", null);
+        int gameID = serverFacade.createGame(game, validAuth);
+        var req = new JoinRequest("WHITE", gameID);
+        Assertions.assertDoesNotThrow(() -> serverFacade.joinGame(req, validAuth));
+        Assertions.assertEquals(serverFacade.listGames(validAuth)[0].whiteUsername(), validAuth.username());
+    }
+
+    @Test
+    public void testJoinGameFail() {
+        GameData game = new GameData(0, null, null, "name", null);
+        int gameID = serverFacade.createGame(game, validAuth);
+        var req = new JoinRequest("WHITE", gameID);
+        AuthData badAuth = new AuthData("1o2i3ihfkjhoqodjfhk1jh423hkjshuu2232", "qwerty");
+        Assertions.assertThrows(Exception.class, () -> serverFacade.joinGame(req, badAuth));
     }
 }

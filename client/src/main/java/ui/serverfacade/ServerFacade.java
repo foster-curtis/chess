@@ -47,6 +47,11 @@ public class ServerFacade {
         return this.makeRequest("POST", path, game, int.class, auth);
     }
 
+    public void joinGame(JoinRequest req, AuthData auth) {
+        String path = "/game";
+        this.makeRequest("PUT", path, req, null, auth);
+    }
+
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, AuthData auth) throws ResponseException {
         try {
