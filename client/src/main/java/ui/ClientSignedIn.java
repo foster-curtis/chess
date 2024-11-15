@@ -53,7 +53,7 @@ public class ClientSignedIn implements Client {
 
         try {
             GameData game = new GameData(0, null, null, input, null);
-            int gameID = server.createGame(game, currentUserAuth);
+            server.createGame(game, currentUserAuth);
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
@@ -61,6 +61,21 @@ public class ClientSignedIn implements Client {
     }
 
     private String listGames() {
+        GameData[] games = server.listGames(currentUserAuth);
+        int gameNum = 1;
+        for (GameData game : games) {
+            String white = game.whiteUsername();
+            String black = game.blackUsername();
+            if (white == null) {
+                white = "Available";
+            }
+            if (black == null) {
+                black = "Available";
+            }
+            System.out.println(gameNum + ": " + game.gameName() + "\nWhite: " + white + "\nBlack: " + black);
+            System.out.println();
+            gameNum += 1;
+        }
         return "";
     }
 
