@@ -9,6 +9,8 @@ import ui.serverfacade.ServerFacade;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import static ui.EscapeSequences.*;
+
 public class ClientSignedIn implements Client {
     private final ServerFacade server;
     private State state = State.LOGGEDIN;
@@ -46,7 +48,8 @@ public class ClientSignedIn implements Client {
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
-        return "User " + currentUserAuth.username() + " successfully logged out";
+        System.out.print(SET_TEXT_COLOR_GREEN);
+        return "User " + currentUserAuth.username() + " successfully logged out" + SET_TEXT_COLOR_WHITE;
     }
 
     private String createGame() {
@@ -60,9 +63,9 @@ public class ClientSignedIn implements Client {
             numGames++;
             gameMap.put(numGames, gameID);
         } catch (Exception e) {
-            return "Error: " + e.getMessage();
+            return SET_TEXT_COLOR_RED + "Error: " + e.getMessage() + SET_TEXT_COLOR_WHITE;
         }
-        return "Game \"" + input + "\" created.";
+        return SET_TEXT_COLOR_GREEN + "Game \"" + input + "\" created." + SET_TEXT_COLOR_WHITE;
     }
 
     private String listGames() {
@@ -92,16 +95,27 @@ public class ClientSignedIn implements Client {
         System.out.print("Desired player color: ");
         String color = scanner.nextLine().toUpperCase();
 
-        int gameID = gameMap.get(num);
+        int gameID;
+        try {
+            gameID = gameMap.get(num);
+        } catch (Exception e) {
+            return SET_TEXT_COLOR_RED + "Invalid game number. Please try again." + SET_TEXT_COLOR_WHITE;
+        }
         var req = new JoinRequest(color, gameID);
-        server.joinGame(req, currentUserAuth);
-        System.out.println("Successfully joined game " + num + " as " + color);
+        try {
+            server.joinGame(req, currentUserAuth);
+        } catch (Exception e) {
+            return SET_TEXT_COLOR_RED + "Error: " + e.getMessage() + SET_TEXT_COLOR_WHITE;
+        }
+        System.out.println(SET_TEXT_COLOR_GREEN + "Successfully joined game " + num + " as " + color);
+        System.out.print(SET_TEXT_COLOR_WHITE);
         return new BoardUI(new ChessGame().getBoard(), color).displayBoard();
     }
 
     private String observeGame() {
         int num = getGameNum();
-        System.out.println("Successfully joined game " + num + " as an observer.");
+        System.out.println(SET_TEXT_COLOR_GREEN + "Successfully joined game " + num + " as an observer.");
+        System.out.print(SET_TEXT_COLOR_WHITE);
         return new BoardUI(new ChessGame().getBoard()).displayBoard();
     }
 
@@ -113,7 +127,8 @@ public class ClientSignedIn implements Client {
             try {
                 num = Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                System.out.println("Error: Must be a number. Please input a game number, not a game name.");
+                System.out.println(SET_TEXT_COLOR_RED + "Error: Must be a number. Please input a game number, not a game name.");
+                System.out.print(SET_TEXT_COLOR_WHITE);
             }
         }
         return num;

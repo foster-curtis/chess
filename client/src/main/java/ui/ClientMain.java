@@ -5,6 +5,9 @@ import ui.serverfacade.ServerFacade;
 
 import java.util.Scanner;
 
+import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
+import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
+
 
 public class ClientMain implements Client {
     private final ServerFacade server;
@@ -53,7 +56,9 @@ public class ClientMain implements Client {
             String input = scanner.nextLine();
             fields = input.split(" ");
             if (fields.length != 2) {
-                System.out.println("Invalid input. Please fill all required fields (2), separated by spaces.");
+                System.out.println(SET_TEXT_COLOR_RED + "Invalid input. Please fill all required fields (2), separated by spaces.");
+                System.out.print(SET_TEXT_COLOR_WHITE);
+                System.out.print(">>> ");
             } else {
                 break;
             }
@@ -63,7 +68,7 @@ public class ClientMain implements Client {
             currentUserAuth = server.login(user);
             state = State.LOGGEDIN;
         } catch (Exception e) {
-            return "Error: " + e.getMessage();
+            return SET_TEXT_COLOR_RED + "Error: " + e.getMessage() + SET_TEXT_COLOR_WHITE;
         }
         return "Welcome back, " + user.username() + "!";
     }
@@ -80,7 +85,8 @@ public class ClientMain implements Client {
             String input = scanner.nextLine();
             fields = input.split(" ");
             if (fields.length != 3) {
-                System.out.println("Invalid input. Please fill all required fields (3), separated by spaces.");
+                System.out.println(SET_TEXT_COLOR_RED + "Invalid input. Please fill all required fields (3), separated by spaces.");
+                System.out.print(SET_TEXT_COLOR_WHITE);
             } else {
                 break;
             }
@@ -90,7 +96,7 @@ public class ClientMain implements Client {
             currentUserAuth = server.register(user);
             state = State.LOGGEDIN;
         } catch (Exception e) {
-            return "Error: " + e.getMessage();
+            return SET_TEXT_COLOR_RED + "Error: " + e.getMessage() + SET_TEXT_COLOR_WHITE;
         }
         return "Welcome to the Chess Server, " + user.username() + "!";
     }
@@ -98,7 +104,6 @@ public class ClientMain implements Client {
     @Override
     public String help() {
         return """
-                
                 1. Help -> View list of available commands
                 2. Quit -> Quit the program
                 3. Login -> Login as returning user

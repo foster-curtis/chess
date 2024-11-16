@@ -3,6 +3,9 @@ package ui;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static ui.EscapeSequences.SET_BG_COLOR_BLACK;
+import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
+
 public class Repl {
     public Client client;
     private final int port;
@@ -13,6 +16,8 @@ public class Repl {
     }
 
     public void run() {
+        System.out.print(SET_BG_COLOR_BLACK);
+        System.out.print(SET_TEXT_COLOR_WHITE);
         System.out.println("♕ Welcome to Chess! ♕");
         System.out.println("Press enter at any time to view the help menu.");
         System.out.println("\nType in a number and press enter to execute a command:");

@@ -145,10 +145,9 @@ public class BoardUI {
 
         if (board[row][col].getTeamColor() == WHITE) {
             out.print(SET_TEXT_COLOR_WHITE);
-            out.print(symbol.toUpperCase());
         } else {
             out.print(SET_TEXT_COLOR_GREEN);
-            out.print(symbol.toLowerCase());
         }
+        out.print(symbol.toUpperCase());
     }
 }
