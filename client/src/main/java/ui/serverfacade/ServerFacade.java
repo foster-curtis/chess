@@ -44,7 +44,10 @@ public class ServerFacade {
 
     public int createGame(GameData game, AuthData auth) {
         String path = "/game";
-        return this.makeRequest("POST", path, game, int.class, auth);
+        record CreateGameResponse(Integer gameID) {
+        }
+        var res = this.makeRequest("POST", path, game, CreateGameResponse.class, auth);
+        return res.gameID;
     }
 
     public void joinGame(JoinRequest req, AuthData auth) {
