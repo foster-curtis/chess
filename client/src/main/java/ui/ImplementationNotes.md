@@ -3,9 +3,9 @@
 //TO DO
 
 - [x] Implement JoinGame
-- [ ] Implement ObserveGame
-- [ ] Draw Board
-- [ ] Draw Board both directions
+- [x] Implement ObserveGame
+- [x] Draw Board
+- [x] Draw Board both directions
 
 1. Start by implementing one endpoint in the ServerFacade
 2. Next, write functionality for the same endpoint in the UI

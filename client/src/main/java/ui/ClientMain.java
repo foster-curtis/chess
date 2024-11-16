@@ -98,7 +98,6 @@ public class ClientMain implements Client {
     @Override
     public String help() {
         return """
-                Enter a number and press enter to execute a command:
                 
                 1. Help -> View list of available commands
                 2. Quit -> Quit the program

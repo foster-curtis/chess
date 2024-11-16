@@ -87,6 +87,7 @@ public class ClientSignedIn implements Client {
     }
 
     private String playGame() {
+        this.listGames();
         int num = getGameNum();
         System.out.print("Desired player color: ");
         String color = scanner.nextLine().toUpperCase();
@@ -95,13 +96,13 @@ public class ClientSignedIn implements Client {
         var req = new JoinRequest(color, gameID);
         server.joinGame(req, currentUserAuth);
         System.out.println("Successfully joined game " + num + " as " + color);
-        return new BoardUI(new ChessGame().getBoard()).displayBoard(color);
+        return new BoardUI(new ChessGame().getBoard(), color).displayBoard();
     }
 
     private String observeGame() {
         int num = getGameNum();
         System.out.println("Successfully joined game " + num + " as an observer.");
-        return new BoardUI(new ChessGame().getBoard()).displayBoard("WHITE");
+        return new BoardUI(new ChessGame().getBoard()).displayBoard();
     }
 
     private int getGameNum() {

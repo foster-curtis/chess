@@ -1,41 +1,38 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessPiece;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
+import java.util.Objects;
 
+import static chess.ChessGame.TeamColor.WHITE;
 import static ui.EscapeSequences.*;
 
 public class BoardUI {
-    private ChessBoard board;
+    private final ChessPiece[][] board;
+    private String playerColor = "WHITE";
 
-
-    // Board dimensions.
-    private static final int BOARD_SIZE_IN_SQUARES = 3;
-    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
-    private static final int LINE_WIDTH_IN_PADDED_CHARS = 1;
-
-    // Padded characters.
     private static final String EMPTY = "   ";
-    private static final String X = " X ";
-    private static final String O = " O ";
-
-    private static final Random rand = new Random();
 
     BoardUI(ChessBoard board) {
-        this.board = board;
+        this.board = board.getBoard();
     }
 
-    public String displayBoard(String playerColor) {
+    BoardUI(ChessBoard board, String playerColor) {
+        this.board = board.getBoard();
+        this.playerColor = playerColor;
+    }
+
+    public String displayBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
 
         drawHeaders(out);
-
-        drawTicTacToeBoard(out);
+        drawChessBoard(out);
+        drawHeaders(out);
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -43,106 +40,93 @@ public class BoardUI {
         return "";
     }
 
-    private static void drawHeaders(PrintStream out) {
+    private void drawHeaders(PrintStream out) {
 
-        setBlack(out);
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_BLUE);
 
-        String[] headers = {"TIC", "TAC", "TOE"};
-        for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-            drawHeader(out, headers[boardCol]);
-
-            if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
-                out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
+        String[] headers = {" a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
+        out.print(EMPTY);
+        if (Objects.equals(this.playerColor, "WHITE")) {
+            for (int boardCol = 0; boardCol < 8; ++boardCol) {
+                out.print(headers[boardCol]);
+            }
+        } else {
+            for (int boardCol = 7; boardCol >= 0; --boardCol) {
+                out.print(headers[boardCol]);
             }
         }
+        out.print(EMPTY);
+
+        setBlack(out);
 
         out.println();
     }
 
-    private static void drawHeader(PrintStream out, String headerText) {
-        int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
-        int suffixLength = SQUARE_SIZE_IN_PADDED_CHARS - prefixLength - 1;
+    private void drawChessBoard(PrintStream out) {
 
-        out.print(EMPTY.repeat(prefixLength));
-        printHeaderText(out, headerText);
-        out.print(EMPTY.repeat(suffixLength));
+        String bgColor = SET_BG_COLOR_LIGHT_GREY;
+        if (Objects.equals(this.playerColor, "WHITE")) {
+            for (int boardRow = 7; boardRow >= 0; --boardRow) {
+                drawRowPreAndPost(out, boardRow);
+                bgColor = toggleBGColor(bgColor);
+                drawRowOfSquares(out, boardRow, bgColor);
+                drawRowPreAndPost(out, boardRow);
+                out.println();
+            }
+        } else {
+            for (int boardRow = 0; boardRow < 8; ++boardRow) {
+                drawRowPreAndPost(out, boardRow);
+                bgColor = toggleBGColor(bgColor);
+                drawRowOfSquares(out, boardRow, bgColor);
+                drawRowPreAndPost(out, boardRow);
+                out.println();
+            }
+        }
     }
 
-    private static void printHeaderText(PrintStream out, String player) {
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_GREEN);
+    private void drawRowPreAndPost(PrintStream out, int row) {
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_BLUE);
 
-        out.print(player);
+        out.print(" " + (row + 1) + " ");
 
         setBlack(out);
     }
 
-    private static void drawTicTacToeBoard(PrintStream out) {
+    private String toggleBGColor(String bgColor) {
+        if (Objects.equals(bgColor, SET_BG_COLOR_LIGHT_GREY)) {
+            return SET_BG_COLOR_DARK_GREEN;
+        } else {
+            return SET_BG_COLOR_LIGHT_GREY;
+        }
+    }
 
-        for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
+    private void drawRowOfSquares(PrintStream out, int row, String bgColor) {
 
-            drawRowOfSquares(out);
-
-            if (boardRow < BOARD_SIZE_IN_SQUARES - 1) {
-                // Draw horizontal row separator.
-                drawHorizontalLine(out);
-                setBlack(out);
+        if (Objects.equals(this.playerColor, "WHITE")) {
+            for (int col = 0; col < 8; ++col) {
+                bgColor = toggleBGColor(bgColor);
+                drawSquare(out, bgColor, row, col);
+            }
+        } else {
+            for (int col = 7; col >= 0; --col) {
+                bgColor = toggleBGColor(bgColor);
+                drawSquare(out, bgColor, row, col);
             }
         }
+
+        setBlack(out);
     }
 
-    private static void drawRowOfSquares(PrintStream out) {
+    private void drawSquare(PrintStream out, String bgColor, int row, int col) {
+        out.print(bgColor);
 
-        for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_PADDED_CHARS; ++squareRow) {
-            for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-                setWhite(out);
-
-                if (squareRow == SQUARE_SIZE_IN_PADDED_CHARS / 2) {
-                    int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
-                    int suffixLength = SQUARE_SIZE_IN_PADDED_CHARS - prefixLength - 1;
-
-                    out.print(EMPTY.repeat(prefixLength));
-                    printPlayer(out, rand.nextBoolean() ? X : O);
-                    out.print(EMPTY.repeat(suffixLength));
-                } else {
-                    out.print(EMPTY.repeat(SQUARE_SIZE_IN_PADDED_CHARS));
-                }
-
-                if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
-                    // Draw vertical column separator.
-                    setRed(out);
-                    out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
-                }
-
-                setBlack(out);
-            }
-
-            out.println();
+        if (board[row][col] != null) {
+            printPiece(out, row, col);
+        } else {
+            out.print(EMPTY);
         }
-    }
-
-    private static void drawHorizontalLine(PrintStream out) {
-
-        int boardSizeInSpaces = BOARD_SIZE_IN_SQUARES * SQUARE_SIZE_IN_PADDED_CHARS +
-                (BOARD_SIZE_IN_SQUARES - 1) * LINE_WIDTH_IN_PADDED_CHARS;
-
-        for (int lineRow = 0; lineRow < LINE_WIDTH_IN_PADDED_CHARS; ++lineRow) {
-            setRed(out);
-            out.print(EMPTY.repeat(boardSizeInSpaces));
-
-            setBlack(out);
-            out.println();
-        }
-    }
-
-    private static void setWhite(PrintStream out) {
-        out.print(SET_BG_COLOR_WHITE);
-        out.print(SET_TEXT_COLOR_WHITE);
-    }
-
-    private static void setRed(PrintStream out) {
-        out.print(SET_BG_COLOR_RED);
-        out.print(SET_TEXT_COLOR_RED);
     }
 
     private static void setBlack(PrintStream out) {
@@ -150,12 +134,21 @@ public class BoardUI {
         out.print(SET_TEXT_COLOR_BLACK);
     }
 
-    private static void printPlayer(PrintStream out, String player) {
-        out.print(SET_BG_COLOR_WHITE);
-        out.print(SET_TEXT_COLOR_BLACK);
+    private void printPiece(PrintStream out, int row, int col) {
 
-        out.print(player);
+        String symbol = board[row][col].getPieceType().toString();
+        if (Objects.equals(symbol, "KNIGHT")) {
+            symbol = " n ";
+        } else {
+            symbol = " " + symbol.charAt(0) + " ";
+        }
 
-        setWhite(out);
+        if (board[row][col].getTeamColor() == WHITE) {
+            out.print(SET_TEXT_COLOR_WHITE);
+            out.print(symbol.toUpperCase());
+        } else {
+            out.print(SET_TEXT_COLOR_GREEN);
+            out.print(symbol.toLowerCase());
+        }
     }
 }
