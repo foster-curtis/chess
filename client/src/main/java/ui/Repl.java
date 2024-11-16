@@ -3,8 +3,6 @@ package ui;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static ui.EscapeSequences.*;
-
 public class Repl {
     public Client client;
     private final int port;
@@ -18,7 +16,6 @@ public class Repl {
         System.out.println("♕ Welcome to Chess! ♕");
         System.out.println("Press enter at any time to view the help menu.");
         System.out.println("\nType in a number and press enter to execute a command:");
-        //System.out.println(SET_BG_COLOR_BLACK + " " + SET_BG_COLOR_WHITE + " " + SET_BG_COLOR_LIGHT_GREY + " " + SET_BG_COLOR_DARK_GREY + " " + SET_BG_COLOR_RED + " " + SET_BG_COLOR_GREEN + " " + SET_BG_COLOR_DARK_GREEN + " " + SET_BG_COLOR_YELLOW + " " + SET_BG_COLOR_BLUE + " " + SET_BG_COLOR_MAGENTA + " " + RESET_BG_COLOR + " ");
         System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);

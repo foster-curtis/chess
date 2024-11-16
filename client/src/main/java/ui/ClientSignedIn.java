@@ -14,7 +14,7 @@ public class ClientSignedIn implements Client {
     private State state = State.LOGGEDIN;
     private final AuthData currentUserAuth;
     private final Scanner scanner = new Scanner(System.in);
-    private HashMap<Integer, Integer> gameMap = new HashMap<>();
+    private final HashMap<Integer, Integer> gameMap = new HashMap<>();
     private int numGames = 0;
 
     public ClientSignedIn(int port, AuthData currUserAuth) {
