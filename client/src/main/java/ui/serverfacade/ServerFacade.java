@@ -36,9 +36,9 @@ public class ServerFacade {
 
     public GameData[] listGames(AuthData auth) {
         String path = "/game";
-        record listGamesResponse(GameData[] games) {
+        record ListGamesResponse(GameData[] games) {
         }
-        var res = this.makeRequest("GET", path, null, listGamesResponse.class, auth);
+        var res = this.makeRequest("GET", path, null, ListGamesResponse.class, auth);
         return res.games;
     }
 
