@@ -94,6 +94,9 @@ public class ClientSignedIn implements Client {
         int num = getGameNum();
         System.out.print("Desired player color: ");
         String color = scanner.nextLine().toUpperCase();
+        if (!color.equals("WHITE") && !color.equals("BLACK")) {
+            return SET_TEXT_COLOR_RED + "Invalid color. Please try again." + SET_TEXT_COLOR_WHITE;
+        }
 
         int gameID;
         try {
