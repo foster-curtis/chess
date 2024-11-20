@@ -7,12 +7,14 @@ import model.*;
 import service.ChessService;
 import exception.ResponseException;
 import spark.*;
+import websocket.WebSocketHandler;
 
 import java.util.Collection;
 import java.util.Map;
 
 public class Server {
     private final ChessService service;
+    private final WebSocketHandler webSocketHandler;
 
     public Server() {
         try {
@@ -20,6 +22,7 @@ public class Server {
             var game = new DBGameDAO();
             var user = new DBUserDAO();
             service = new ChessService(game, user, auth);
+            webSocketHandler = new WebSocketHandler();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -29,6 +32,8 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         // Register your endpoints and handle exceptions here.
         //Clear
