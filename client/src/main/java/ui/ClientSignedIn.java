@@ -18,10 +18,13 @@ public class ClientSignedIn implements Client {
     private final Scanner scanner = new Scanner(System.in);
     private final HashMap<Integer, Integer> gameMap = new HashMap<>();
     private int numGames = 0;
+    private final int port;
+    private WebSocketFacade ws;
 
     public ClientSignedIn(int port, AuthData currUserAuth) {
         this.server = new ServerFacade(port);
         currentUserAuth = currUserAuth;
+        this.port = port;
     }
 
     @Override
@@ -117,6 +120,10 @@ public class ClientSignedIn implements Client {
 
     private String observeGame() {
         int num = getGameNum();
+
+        //Connect to websocket here
+        ws = new WebSocketFacade(this.port);
+
         System.out.println(SET_TEXT_COLOR_GREEN + "Successfully joined game " + num + " as an observer.");
         System.out.print(SET_TEXT_COLOR_WHITE);
         return new BoardUI(new ChessGame().getBoard()).displayBoard();
