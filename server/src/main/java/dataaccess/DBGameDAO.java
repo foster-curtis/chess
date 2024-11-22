@@ -82,4 +82,9 @@ public class DBGameDAO extends SqlConfig implements GameDAO {
         String statement = "UPDATE games SET whiteUsername = ?, blackUsername = ? WHERE gameID = ?";
         executeUpdate(statement, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameID());
     }
+
+    public void deleteGame(int gameID) throws DataAccessException {
+        String statement = "DELETE FROM games WHERE gameID = ?";
+        executeUpdate(statement, gameID);
+    }
 }

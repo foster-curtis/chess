@@ -13,4 +13,6 @@ public interface GameDAO extends DataAccess {
     GameData getGame(int gameID) throws DataAccessException;
 
     void updateGame(GameData gameData) throws DataAccessException;
+
+    void deleteGame(int gameID) throws DataAccessException;
 }

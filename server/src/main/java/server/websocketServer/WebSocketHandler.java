@@ -12,12 +12,13 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.Session;
 import service.WebSocketService;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 
 import java.io.IOException;
-
-import static websocket.messages.ServerMessage.ServerMessageType.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @WebSocket
 public class WebSocketHandler {
@@ -29,6 +30,7 @@ public class WebSocketHandler {
      */
     private final GameConnectionManager connectionManager;
     private final WebSocketService service;
+    private final HashMap<Integer, Boolean> gameActive = new HashMap<>();
 
     public WebSocketHandler(AuthDAO auth, GameDAO game, UserDAO user) {
         this.service = new WebSocketService(game, user, auth);
@@ -51,13 +53,14 @@ public class WebSocketHandler {
     private void connect(UserGameCommand command, Session session) throws DataAccessException, IOException {
         GameUsernamePackage pack = service.connect(command);
         connectionManager.addToGame(command.getGameID(), session);
+        gameActive.putIfAbsent(command.getGameID(), true);
 
         // Send a load game message to the client
-        var message = new LoadGameMessage(LOAD_GAME, pack.gameData());
+        var message = new LoadGameMessage(pack.gameData());
         sendMessage(new Gson().toJson(message), session);
 
         // Broadcast a message to all other clients that the user joined the game
-        var broadcast = new NotificationMessage(NOTIFICATION, pack.username() + " has joined the game.");
+        var broadcast = new NotificationMessage(pack.username() + " has joined the game.");
         broadcast(command.getGameID(), new Gson().toJson(broadcast), session);
     }
 
@@ -66,15 +69,30 @@ public class WebSocketHandler {
     }
 
     private void leave(UserGameCommand command, Session session) throws DataAccessException, IOException {
-        connectionManager.removeFromGame(command.getGameID(), session);
-        var username = service.leave(command);
+        Integer gameID = command.getGameID();
+        connectionManager.removeFromGame(gameID, session);
 
-        var broadcast = new NotificationMessage(NOTIFICATION, username + " has left the game.");
-        broadcast(command.getGameID(), new Gson().toJson(broadcast), session);
+        // If there are no more players in the game and a game has ended, delete the game
+        boolean gameExpired = connectionManager.getSessionsForGame(gameID).isEmpty() && !gameActive.get(gameID);
+
+        var username = service.leave(command, gameExpired);
+
+        var broadcast = new NotificationMessage(username + " has left the game.");
+        broadcast(gameID, new Gson().toJson(broadcast), session);
     }
 
-    private void resign(UserGameCommand command, Session session) {
-
+    private void resign(UserGameCommand command, Session session) throws DataAccessException, IOException {
+        var username = service.resign(command);
+        if (!gameActive.get(command.getGameID())) {
+            var message = new ErrorMessage("This game is over, you cannot perform this action.");
+            sendMessage(new Gson().toJson(message), session);
+        } else {
+            gameActive.put(command.getGameID(), false);
+            var broadcast = new NotificationMessage(username + "has resigned from the game.");
+            broadcast(command.getGameID(), new Gson().toJson(broadcast), session);
+            var message = new NotificationMessage("You have resigned from the game.");
+            sendMessage(new Gson().toJson(message), session);
+        }
     }
 
     private void sendMessage(String message, Session session) throws IOException {
@@ -82,11 +100,19 @@ public class WebSocketHandler {
     }
 
     private void broadcast(Integer gameID, String message, Session excludedSession) throws IOException {
+        var removeList = new ArrayList<Session>();
         var sessions = connectionManager.getSessionsForGame(gameID);
         for (Session session : sessions) {
-            if (session != excludedSession) {
-                session.getRemote().sendString(message);
+            if (session.isOpen()) {
+                if (session != excludedSession) {
+                    sendMessage(message, session);
+                }
+            } else {
+                removeList.add(session);
             }
+        }
+        for (var r : removeList) {
+            connectionManager.removeSession(r);
         }
     }
 }
