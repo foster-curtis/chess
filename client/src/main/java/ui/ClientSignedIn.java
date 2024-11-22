@@ -5,6 +5,7 @@ import model.AuthData;
 import model.GameData;
 import model.JoinRequest;
 import ui.serverfacade.ServerFacade;
+import ui.websocketmanager.WebSocketFacade;
 
 import java.util.HashMap;
 import java.util.Scanner;
@@ -38,9 +39,24 @@ public class ClientSignedIn implements Client {
             case "2" -> logout();
             case "3" -> createGame();
             case "4" -> listGames();
+            case "5" -> connectToWebSocket("5");
+            case "6" -> connectToWebSocket("6");
+            default -> help();
+        };
+    }
+
+    private String connectToWebSocket(String input) {
+        ws = new WebSocketFacade(this.port);
+        try {
+            ws.send("ANNOUNCEMENT: We have sent a message");
+        } catch (Exception e) {
+            System.out.println("ignore this error :D");
+        }
+
+        return switch (input) {
             case "5" -> playGame();
             case "6" -> observeGame();
-            default -> help();
+            default -> "This is a really strange error that never should have happened. How did you manage that?";
         };
     }
 
@@ -120,10 +136,6 @@ public class ClientSignedIn implements Client {
 
     private String observeGame() {
         int num = getGameNum();
-
-        //Connect to websocket here
-        ws = new WebSocketFacade(this.port);
-
         System.out.println(SET_TEXT_COLOR_GREEN + "Successfully joined game " + num + " as an observer.");
         System.out.print(SET_TEXT_COLOR_WHITE);
         return new BoardUI(new ChessGame().getBoard()).displayBoard();

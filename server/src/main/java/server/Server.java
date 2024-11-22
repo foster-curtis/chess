@@ -7,7 +7,7 @@ import model.*;
 import service.ChessService;
 import exception.ResponseException;
 import spark.*;
-import websocket.WebSocketHandler;
+import server.websocketServer.WebSocketHandler;
 
 import java.util.Collection;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class Server {
             var game = new DBGameDAO();
             var user = new DBUserDAO();
             service = new ChessService(game, user, auth);
-            webSocketHandler = new WebSocketHandler();
+            webSocketHandler = new WebSocketHandler(auth, game, user);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

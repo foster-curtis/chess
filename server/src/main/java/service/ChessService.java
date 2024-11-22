@@ -8,23 +8,10 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 
-public class ChessService {
-    private final GameDAO gameAccess;
-    private final UserDAO userAccess;
-    private final AuthDAO authAccess;
+public class ChessService extends Service {
 
     public ChessService(GameDAO gameDAO, UserDAO userDAO, AuthDAO authDAO) {
-        gameAccess = gameDAO;
-        userAccess = userDAO;
-        authAccess = authDAO;
-    }
-
-    // Clear
-
-    public void clear() throws DataAccessException {
-        userAccess.clear();
-        gameAccess.clear();
-        authAccess.clear();
+        super(gameDAO, userDAO, authDAO);
     }
 
     // Game Services
@@ -95,17 +82,6 @@ public class ChessService {
     public void logout(AuthData authData) throws DataAccessException {
         authenticate(authData);
         authAccess.deleteAuth(authData);
-    }
-
-    private AuthData authenticate(AuthData authData) throws DataAccessException {
-        if (authData == null) {
-            throw new DataAccessException("bad request", 400);
-        }
-        var auth = authAccess.getAuth(authData);
-        if (auth == null) {
-            throw new DataAccessException("unauthorized", 401);
-        }
-        return auth;
     }
 
     public AuthData getAuth(AuthData auth) throws DataAccessException {

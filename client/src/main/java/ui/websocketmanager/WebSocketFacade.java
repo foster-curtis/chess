@@ -1,4 +1,4 @@
-package ui;
+package ui.websocketmanager;
 
 import exception.ResponseException;
 
@@ -18,14 +18,21 @@ public class WebSocketFacade extends Endpoint {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
 
-            System.out.println("Websocket connection established.");
+            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
 
-            //set message handler
+                @Override
+                public void onMessage(String msg) {
+                    System.out.println(msg);
+                }
+            });
 
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new ResponseException(ex.getMessage(), 500);
         }
+    }
 
+    public void send(String msg) throws Exception {
+        this.session.getBasicRemote().sendText(msg);
     }
 
     @Override
