@@ -5,7 +5,7 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
-import model.GameAuthPackage;
+import model.GameUsernamePackage;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
@@ -49,7 +49,7 @@ public class WebSocketHandler {
     // SERIALIZE YOUR MESSAGES BEFORE YOU PASS THEM TO THE SEND METHOD!!
 
     private void connect(UserGameCommand command, Session session) throws DataAccessException, IOException {
-        GameAuthPackage pack = service.connect(command);
+        GameUsernamePackage pack = service.connect(command);
         connectionManager.addToGame(command.getGameID(), session);
 
         // Send a load game message to the client
@@ -57,7 +57,7 @@ public class WebSocketHandler {
         sendMessage(new Gson().toJson(message), session);
 
         // Broadcast a message to all other clients that the user joined the game
-        var broadcast = new NotificationMessage(NOTIFICATION, pack.authData().username() + " has joined the game.");
+        var broadcast = new NotificationMessage(NOTIFICATION, pack.username() + " has joined the game.");
         broadcast(command.getGameID(), new Gson().toJson(broadcast), session);
     }
 
@@ -65,8 +65,12 @@ public class WebSocketHandler {
 
     }
 
-    private void leave(UserGameCommand command, Session session) {
+    private void leave(UserGameCommand command, Session session) throws DataAccessException, IOException {
+        connectionManager.removeFromGame(command.getGameID(), session);
+        var username = service.leave(command);
 
+        var broadcast = new NotificationMessage(NOTIFICATION, username + " has left the game.");
+        broadcast(command.getGameID(), new Gson().toJson(broadcast), session);
     }
 
     private void resign(UserGameCommand command, Session session) {
