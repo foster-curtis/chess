@@ -79,8 +79,8 @@ public class DBGameDAO extends SqlConfig implements GameDAO {
 
     @Override
     public void updateGame(GameData gameData) throws DataAccessException {
-        String statement = "UPDATE games SET whiteUsername = ?, blackUsername = ? WHERE gameID = ?";
-        executeUpdate(statement, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameID());
+        String statement = "UPDATE games SET whiteUsername = ?, blackUsername = ?, game = ? WHERE gameID = ?";
+        executeUpdate(statement, gameData.whiteUsername(), gameData.blackUsername(), gameData.game(), gameData.gameID());
     }
 
     public void deleteGame(int gameID) throws DataAccessException {
