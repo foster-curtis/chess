@@ -13,7 +13,6 @@ import java.util.Collection;
 public class ChessGame {
     ChessBoard gameBoard;
     TeamColor currentTeamTurn;
-    //ChessPiece threat = null;
 
     public ChessGame() {
         ChessBoard newBoard = new ChessBoard();
@@ -47,7 +46,7 @@ public class ChessGame {
     }
 
     /**
-     * Gets a valid moves for a piece at the given location
+     * Gets valid moves for a piece at the given location
      *
      * @param startPosition the piece to get valid moves for
      * @return Set of valid moves for requested piece, or null if no piece at
