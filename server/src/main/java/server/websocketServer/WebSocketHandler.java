@@ -46,7 +46,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(UserGameCommand command, Session session) throws DataAccessException, IOException {
+    private void connect(UserGameCommand command, Session session) throws IOException {
         try {
             GameUsernamePackage pack = service.connect(command);
             if (pack.gameData() == null) {
@@ -65,25 +65,29 @@ public class WebSocketHandler {
         }
     }
 
-    private void makeMove(MakeMoveCommand command, Session session) throws DataAccessException, InvalidMoveException, IOException {
-        if (!gameActive.get(command.getGameID())) {
-            sendErrorMessage("The game is over, no more moves can be made.", session);
-        } else {
+    private void makeMove(MakeMoveCommand command, Session session) throws IOException {
+        try {
+            if (!gameActive.get(command.getGameID())) {
+                sendErrorMessage("The game is over, no more moves can be made.", session);
+            } else {
 
-            MakeMoveResponse res = service.makeMove(command);
+                MakeMoveResponse res = service.makeMove(command);
 
-            broadcast(command.getGameID(), new Gson().toJson(new LoadGameMessage(res.gameData())), null);
-            SendNotificationBroadcast(res.username() + " has made a move.", command.getGameID(), session);
+                broadcast(command.getGameID(), new Gson().toJson(new LoadGameMessage(res.gameData())), null);
+                SendNotificationBroadcast(res.username() + " has made a move.", command.getGameID(), session);
 
-            if (res.inCheckmate()) {
-                SendNotificationBroadcast(res.username() + " is in Checkmate!", command.getGameID(), null);
-                gameActive.put(command.getGameID(), false);
-            } else if (res.inStalemate()) {
-                SendNotificationBroadcast(res.username() + " is in Stalemate!", command.getGameID(), null);
-                gameActive.put(command.getGameID(), false);
-            } else if (res.inCheck()) {
-                SendNotificationBroadcast(res.username() + " is in Check!", command.getGameID(), null);
+                if (res.inCheckmate()) {
+                    SendNotificationBroadcast(res.username() + " is in Checkmate!", command.getGameID(), null);
+                    gameActive.put(command.getGameID(), false);
+                } else if (res.inStalemate()) {
+                    SendNotificationBroadcast(res.username() + " is in Stalemate!", command.getGameID(), null);
+                    gameActive.put(command.getGameID(), false);
+                } else if (res.inCheck()) {
+                    SendNotificationBroadcast(res.username() + " is in Check!", command.getGameID(), null);
+                }
             }
+        } catch (DataAccessException | InvalidMoveException e) {
+            sendErrorMessage(e.getMessage(), session);
         }
     }
 

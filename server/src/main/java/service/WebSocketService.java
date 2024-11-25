@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import chess.InvalidMoveException;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -52,6 +53,15 @@ public class WebSocketService extends Service {
         var game = gameData.game();
         var move = cmd.getMove();
         var color = game.getTeamTurn();
+
+        if (!Objects.equals(authData.username(), gameData.whiteUsername()) && !Objects.equals(authData.username(), gameData.blackUsername())) {
+            throw new InvalidMoveException("You are an observer. You cannot make a move.");
+        }
+        if (color == ChessGame.TeamColor.WHITE && !Objects.equals(authData.username(), gameData.whiteUsername())) {
+            throw new InvalidMoveException("That is not your piece!");
+        } else if (color == ChessGame.TeamColor.BLACK && !Objects.equals(authData.username(), gameData.blackUsername())) {
+            throw new InvalidMoveException("That is not your piece!");
+        }
 
         // Can't hurt to check valid moves one more time...
         var validMoves = game.validMoves(move.getStartPosition());
