@@ -47,18 +47,21 @@ public class WebSocketHandler {
     }
 
     private void connect(UserGameCommand command, Session session) throws DataAccessException, IOException {
-        GameUsernamePackage pack = service.connect(command);
+        try {
+            GameUsernamePackage pack = service.connect(command);
+            if (pack.gameData() == null) {
+                sendErrorMessage("Invalid game ID.", session);
+            } else {
+                connectionManager.addToGame(command.getGameID(), session);
+                gameActive.putIfAbsent(command.getGameID(), true);
 
-        if (pack.gameData() == null) {
-            sendErrorMessage("Invalid game ID.", session);
-        } else {
-            connectionManager.addToGame(command.getGameID(), session);
-            gameActive.putIfAbsent(command.getGameID(), true);
+                var message = new LoadGameMessage(pack.gameData());
+                sendMessage(new Gson().toJson(message), session);
 
-            var message = new LoadGameMessage(pack.gameData());
-            sendMessage(new Gson().toJson(message), session);
-
-            SendNotificationBroadcast(pack.username() + " has joined the game.", command.getGameID(), session);
+                SendNotificationBroadcast(pack.username() + " has joined the game.", command.getGameID(), session);
+            }
+        } catch (DataAccessException e) {
+            sendErrorMessage(e.getMessage(), session);
         }
     }
 
