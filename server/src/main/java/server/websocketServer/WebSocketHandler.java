@@ -35,7 +35,7 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws DataAccessException, IOException, InvalidMoveException {
+    public void onMessage(Session session, String message) throws DataAccessException, IOException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         MakeMoveCommand mmCommand = new Gson().fromJson(message, MakeMoveCommand.class);
         switch (command.getCommandType()) {
@@ -104,14 +104,18 @@ public class WebSocketHandler {
     }
 
     private void resign(UserGameCommand command, Session session) throws DataAccessException, IOException {
-        var username = service.resign(command);
-        if (!gameActive.get(command.getGameID())) {
-            sendErrorMessage("This game is over, you cannot perform this action.", session);
-        } else {
-            gameActive.put(command.getGameID(), false);
-            SendNotificationBroadcast(username + "has resigned from the game.", command.getGameID(), session);
-            var message = new NotificationMessage("You have resigned from the game.");
-            sendMessage(new Gson().toJson(message), session);
+        try {
+            var username = service.resign(command);
+            if (!gameActive.get(command.getGameID())) {
+                sendErrorMessage("This game is over, you cannot perform this action.", session);
+            } else {
+                gameActive.put(command.getGameID(), false);
+                SendNotificationBroadcast(username + "has resigned from the game.", command.getGameID(), session);
+                var message = new NotificationMessage("You have resigned from the game.");
+                sendMessage(new Gson().toJson(message), session);
+            }
+        } catch (DataAccessException e) {
+            sendErrorMessage(e.getMessage(), session);
         }
     }
 
@@ -143,5 +147,9 @@ public class WebSocketHandler {
         for (var r : removeList) {
             connectionManager.removeSession(r);
         }
+    }
+
+    public void clear() {
+        gameActive.clear();
     }
 }

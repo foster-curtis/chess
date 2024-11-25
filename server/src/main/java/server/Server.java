@@ -89,6 +89,7 @@ public class Server {
 
     private Object clearHandler(Request req, Response res) throws DataAccessException {
         service.clear();
+        webSocketHandler.clear();
         //Return empty JsonObject
         return new Gson().toJson(new JsonObject());
     }

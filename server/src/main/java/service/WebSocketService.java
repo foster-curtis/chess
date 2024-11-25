@@ -44,6 +44,10 @@ public class WebSocketService extends Service {
 
     public String resign(UserGameCommand cmd) throws DataAccessException {
         var auth = authenticate(new AuthData(cmd.getAuthToken(), null));
+        var gameData = gameAccess.getGame(cmd.getGameID());
+        if (!Objects.equals(auth.username(), gameData.whiteUsername()) && !Objects.equals(auth.username(), gameData.blackUsername())) {
+            throw new DataAccessException("You are an observer. You cannot resign.");
+        }
         return auth.username();
     }
 
