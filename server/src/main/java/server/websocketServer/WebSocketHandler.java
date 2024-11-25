@@ -1,16 +1,19 @@
 package server.websocketServer;
 
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.GameUsernamePackage;
+import model.MakeMoveResponse;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
 import org.eclipse.jetty.websocket.api.Session;
 import service.WebSocketService;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -22,12 +25,6 @@ import java.util.HashMap;
 
 @WebSocket
 public class WebSocketHandler {
-    /**
-     * A list of connection managers. A new one should be created
-     * for each game. The connection manager should take in a gameID
-     * when it is created, and new connections with each user will
-     * be initiated through the connection manager.
-     */
     private final GameConnectionManager connectionManager;
     private final WebSocketService service;
     private final HashMap<Integer, Boolean> gameActive = new HashMap<>();
@@ -38,34 +35,48 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws DataAccessException, IOException {
+    public void onMessage(Session session, String message) throws DataAccessException, IOException, InvalidMoveException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
+        MakeMoveCommand mmCommand = new Gson().fromJson(message, MakeMoveCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> connect(command, session);
-            case MAKE_MOVE -> makeMove(command, session);
+            case MAKE_MOVE -> makeMove(mmCommand, session);
             case LEAVE -> leave(command, session);
             case RESIGN -> resign(command, session);
         }
     }
-
-    // SERIALIZE YOUR MESSAGES BEFORE YOU PASS THEM TO THE SEND METHOD!!
 
     private void connect(UserGameCommand command, Session session) throws DataAccessException, IOException {
         GameUsernamePackage pack = service.connect(command);
         connectionManager.addToGame(command.getGameID(), session);
         gameActive.putIfAbsent(command.getGameID(), true);
 
-        // Send a load game message to the client
         var message = new LoadGameMessage(pack.gameData());
         sendMessage(new Gson().toJson(message), session);
 
-        // Broadcast a message to all other clients that the user joined the game
-        var broadcast = new NotificationMessage(pack.username() + " has joined the game.");
-        broadcast(command.getGameID(), new Gson().toJson(broadcast), session);
+        SendNotificationBroadcast(pack.username() + " has joined the game.", command.getGameID(), session);
     }
 
-    private void makeMove(UserGameCommand command, Session session) {
+    private void makeMove(MakeMoveCommand command, Session session) throws DataAccessException, InvalidMoveException, IOException {
+        if (!gameActive.get(command.getGameID())) {
+            var message = new ErrorMessage("The game is over, no more moves can be made.");
+            sendMessage(new Gson().toJson(message), session);
+        }
 
+        MakeMoveResponse res = service.makeMove(command);
+
+        broadcast(command.getGameID(), new Gson().toJson(new LoadGameMessage(res.gameData())), null);
+        SendNotificationBroadcast(res.username() + " has made a move.", command.getGameID(), session);
+
+        if (res.inCheckmate()) {
+            SendNotificationBroadcast(res.username() + " is in Checkmate!", command.getGameID(), null);
+            gameActive.put(command.getGameID(), false);
+        } else if (res.inStalemate()) {
+            SendNotificationBroadcast(res.username() + " is in Stalemate!", command.getGameID(), null);
+            gameActive.put(command.getGameID(), false);
+        } else if (res.inCheck()) {
+            SendNotificationBroadcast(res.username() + " is in Check!", command.getGameID(), null);
+        }
     }
 
     private void leave(UserGameCommand command, Session session) throws DataAccessException, IOException {
@@ -77,8 +88,7 @@ public class WebSocketHandler {
 
         var username = service.leave(command, gameExpired);
 
-        var broadcast = new NotificationMessage(username + " has left the game.");
-        broadcast(gameID, new Gson().toJson(broadcast), session);
+        SendNotificationBroadcast(username + " has left the game.", command.getGameID(), session);
     }
 
     private void resign(UserGameCommand command, Session session) throws DataAccessException, IOException {
@@ -88,11 +98,15 @@ public class WebSocketHandler {
             sendMessage(new Gson().toJson(message), session);
         } else {
             gameActive.put(command.getGameID(), false);
-            var broadcast = new NotificationMessage(username + "has resigned from the game.");
-            broadcast(command.getGameID(), new Gson().toJson(broadcast), session);
+            SendNotificationBroadcast(username + "has resigned from the game.", command.getGameID(), session);
             var message = new NotificationMessage("You have resigned from the game.");
             sendMessage(new Gson().toJson(message), session);
         }
+    }
+
+    private void SendNotificationBroadcast(String message, Integer gameID, Session session) throws IOException {
+        var broadcast = new NotificationMessage(message);
+        broadcast(gameID, new Gson().toJson(broadcast), session);
     }
 
     private void sendMessage(String message, Session session) throws IOException {

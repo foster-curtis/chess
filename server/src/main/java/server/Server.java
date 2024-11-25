@@ -52,7 +52,7 @@ public class Server {
         Spark.put("/game", this::joinGameHandler);
 
         //Exceptions
-        Spark.exception(DataAccessException.class, this::exceptionHandler);
+        Spark.exception(Exception.class, this::exceptionHandler);
         Spark.notFound((req, res) -> {
             var msg = String.format("[%s] %s not found", req.requestMethod(), req.pathInfo());
             return exceptionHandler(new ResponseException(msg, 400), req, res);

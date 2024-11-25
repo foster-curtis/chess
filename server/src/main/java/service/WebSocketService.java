@@ -1,10 +1,12 @@
 package service;
 
+import chess.InvalidMoveException;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.*;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 import java.util.Objects;
@@ -42,5 +44,36 @@ public class WebSocketService extends Service {
     public String resign(UserGameCommand cmd) throws DataAccessException {
         var auth = authenticate(new AuthData(cmd.getAuthToken(), null));
         return auth.username();
+    }
+
+    public MakeMoveResponse makeMove(MakeMoveCommand cmd) throws DataAccessException, InvalidMoveException {
+        var authData = authenticate(new AuthData(cmd.getAuthToken(), null));
+        var gameData = gameAccess.getGame(cmd.getGameID());
+        var game = gameData.game();
+        var move = cmd.getMove();
+        var color = game.getTeamTurn();
+
+        // Can't hurt to check valid moves one more time...
+        var validMoves = game.validMoves(move.getStartPosition());
+        if (validMoves == null) {
+            throw new InvalidMoveException("Invalid Move");
+        }
+
+        game.makeMove(move);
+
+        boolean inCheck = false, inCheckmate = false, inStalemate = false;
+        if (game.isInCheckmate(color)) {
+            inCheckmate = true;
+        }
+        if (game.isInCheck(color)) {
+            inCheck = true;
+        }
+        if (game.isInStalemate(color)) {
+            inStalemate = true;
+        }
+
+        gameAccess.updateGame(gameData);
+
+        return new MakeMoveResponse(authData.username(), gameData, inCheck, inCheckmate, inStalemate);
     }
 }
