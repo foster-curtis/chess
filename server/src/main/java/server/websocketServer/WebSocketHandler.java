@@ -35,7 +35,7 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws DataAccessException, IOException {
+    public void onMessage(Session session, String message) throws IOException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         MakeMoveCommand mmCommand = new Gson().fromJson(message, MakeMoveCommand.class);
         switch (command.getCommandType()) {
@@ -91,19 +91,23 @@ public class WebSocketHandler {
         }
     }
 
-    private void leave(UserGameCommand command, Session session) throws DataAccessException, IOException {
+    private void leave(UserGameCommand command, Session session) throws IOException {
         Integer gameID = command.getGameID();
         connectionManager.removeFromGame(gameID, session);
 
         // If there are no more players in the game and a game has ended, delete the game
         boolean gameExpired = connectionManager.getSessionsForGame(gameID).isEmpty() && !gameActive.get(gameID);
 
-        var username = service.leave(command, gameExpired);
+        try {
+            var username = service.leave(command, gameExpired);
 
-        SendNotificationBroadcast(username + " has left the game.", command.getGameID(), session);
+            SendNotificationBroadcast(username + " has left the game.", command.getGameID(), session);
+        } catch (DataAccessException e) {
+            sendErrorMessage(e.getMessage(), session);
+        }
     }
 
-    private void resign(UserGameCommand command, Session session) throws DataAccessException, IOException {
+    private void resign(UserGameCommand command, Session session) throws IOException {
         try {
             var username = service.resign(command);
             if (!gameActive.get(command.getGameID())) {
