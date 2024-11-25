@@ -48,34 +48,39 @@ public class WebSocketHandler {
 
     private void connect(UserGameCommand command, Session session) throws DataAccessException, IOException {
         GameUsernamePackage pack = service.connect(command);
-        connectionManager.addToGame(command.getGameID(), session);
-        gameActive.putIfAbsent(command.getGameID(), true);
 
-        var message = new LoadGameMessage(pack.gameData());
-        sendMessage(new Gson().toJson(message), session);
+        if (pack.gameData() == null) {
+            sendErrorMessage("Invalid game ID.", session);
+        } else {
+            connectionManager.addToGame(command.getGameID(), session);
+            gameActive.putIfAbsent(command.getGameID(), true);
 
-        SendNotificationBroadcast(pack.username() + " has joined the game.", command.getGameID(), session);
+            var message = new LoadGameMessage(pack.gameData());
+            sendMessage(new Gson().toJson(message), session);
+
+            SendNotificationBroadcast(pack.username() + " has joined the game.", command.getGameID(), session);
+        }
     }
 
     private void makeMove(MakeMoveCommand command, Session session) throws DataAccessException, InvalidMoveException, IOException {
         if (!gameActive.get(command.getGameID())) {
-            var message = new ErrorMessage("The game is over, no more moves can be made.");
-            sendMessage(new Gson().toJson(message), session);
-        }
+            sendErrorMessage("The game is over, no more moves can be made.", session);
+        } else {
 
-        MakeMoveResponse res = service.makeMove(command);
+            MakeMoveResponse res = service.makeMove(command);
 
-        broadcast(command.getGameID(), new Gson().toJson(new LoadGameMessage(res.gameData())), null);
-        SendNotificationBroadcast(res.username() + " has made a move.", command.getGameID(), session);
+            broadcast(command.getGameID(), new Gson().toJson(new LoadGameMessage(res.gameData())), null);
+            SendNotificationBroadcast(res.username() + " has made a move.", command.getGameID(), session);
 
-        if (res.inCheckmate()) {
-            SendNotificationBroadcast(res.username() + " is in Checkmate!", command.getGameID(), null);
-            gameActive.put(command.getGameID(), false);
-        } else if (res.inStalemate()) {
-            SendNotificationBroadcast(res.username() + " is in Stalemate!", command.getGameID(), null);
-            gameActive.put(command.getGameID(), false);
-        } else if (res.inCheck()) {
-            SendNotificationBroadcast(res.username() + " is in Check!", command.getGameID(), null);
+            if (res.inCheckmate()) {
+                SendNotificationBroadcast(res.username() + " is in Checkmate!", command.getGameID(), null);
+                gameActive.put(command.getGameID(), false);
+            } else if (res.inStalemate()) {
+                SendNotificationBroadcast(res.username() + " is in Stalemate!", command.getGameID(), null);
+                gameActive.put(command.getGameID(), false);
+            } else if (res.inCheck()) {
+                SendNotificationBroadcast(res.username() + " is in Check!", command.getGameID(), null);
+            }
         }
     }
 
@@ -94,8 +99,7 @@ public class WebSocketHandler {
     private void resign(UserGameCommand command, Session session) throws DataAccessException, IOException {
         var username = service.resign(command);
         if (!gameActive.get(command.getGameID())) {
-            var message = new ErrorMessage("This game is over, you cannot perform this action.");
-            sendMessage(new Gson().toJson(message), session);
+            sendErrorMessage("This game is over, you cannot perform this action.", session);
         } else {
             gameActive.put(command.getGameID(), false);
             SendNotificationBroadcast(username + "has resigned from the game.", command.getGameID(), session);
@@ -107,6 +111,10 @@ public class WebSocketHandler {
     private void SendNotificationBroadcast(String message, Integer gameID, Session session) throws IOException {
         var broadcast = new NotificationMessage(message);
         broadcast(gameID, new Gson().toJson(broadcast), session);
+    }
+
+    private void sendErrorMessage(String message, Session session) throws IOException {
+        sendMessage(new Gson().toJson(new ErrorMessage(message)), session);
     }
 
     private void sendMessage(String message, Session session) throws IOException {
