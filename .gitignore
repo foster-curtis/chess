@@ -13,4 +13,4 @@ out/
 server/**/db.properties
 
 ### notes ###
-client/**/notes
+client/**/ScannerBackgroundColor.txt
