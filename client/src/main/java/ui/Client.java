@@ -2,8 +2,6 @@ package ui;
 
 import model.AuthData;
 
-import java.util.HashMap;
-
 public interface Client {
 
     State getState();

@@ -43,6 +43,15 @@ public class Repl {
 
             while (client.getState() == State.LOGGEDIN) {
                 result = loop(result, scanner);
+                if (client.getState() == State.INGAME) {
+                    this.client = new ClientInGame(port, client.getCurrentUserAuth());
+                    System.out.println("Here are your new commands while you play the game!\n" +
+                            "Press enter at any time to view them again.");
+                    System.out.println(client.help());
+                }
+                while (client.getState() == State.INGAME) {
+                    result = loop(result, scanner);
+                }
             }
         }
 
@@ -52,6 +61,7 @@ public class Repl {
     private String loop(String result, Scanner scanner) {
         System.out.print(">>> ");
         String input = scanner.nextLine();
+        System.out.flush();
 
         try {
             result = client.eval(input);

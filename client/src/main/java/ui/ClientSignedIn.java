@@ -1,11 +1,9 @@
 package ui;
 
-import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.JoinRequest;
 import ui.serverfacade.ServerFacade;
-import ui.websocketmanager.WebSocketFacade;
 
 import java.util.HashMap;
 import java.util.Scanner;
@@ -19,13 +17,10 @@ public class ClientSignedIn implements Client {
     private final Scanner scanner = new Scanner(System.in);
     private final HashMap<Integer, Integer> gameMap = new HashMap<>();
     private int numGames = 0;
-    private final int port;
-    private WebSocketFacade ws;
 
     public ClientSignedIn(int port, AuthData currUserAuth) {
         this.server = new ServerFacade(port);
         currentUserAuth = currUserAuth;
-        this.port = port;
     }
 
     @Override
@@ -39,24 +34,9 @@ public class ClientSignedIn implements Client {
             case "2" -> logout();
             case "3" -> createGame();
             case "4" -> listGames();
-            case "5" -> connectToWebSocket("5");
-            case "6" -> connectToWebSocket("6");
-            default -> help();
-        };
-    }
-
-    private String connectToWebSocket(String input) {
-        ws = new WebSocketFacade(this.port);
-        try {
-            ws.send("ANNOUNCEMENT: We have sent a message");
-        } catch (Exception e) {
-            System.out.println("ignore this error :D");
-        }
-
-        return switch (input) {
             case "5" -> playGame();
             case "6" -> observeGame();
-            default -> "This is a really strange error that never should have happened. How did you manage that?";
+            default -> help();
         };
     }
 
@@ -131,14 +111,15 @@ public class ClientSignedIn implements Client {
         }
         System.out.println(SET_TEXT_COLOR_GREEN + "Successfully joined game " + num + " as " + color);
         System.out.print(SET_TEXT_COLOR_WHITE);
-        return new BoardUI(new ChessGame().getBoard(), color).displayBoard();
+        return "";
     }
 
     private String observeGame() {
         int num = getGameNum();
         System.out.println(SET_TEXT_COLOR_GREEN + "Successfully joined game " + num + " as an observer.");
         System.out.print(SET_TEXT_COLOR_WHITE);
-        return new BoardUI(new ChessGame().getBoard()).displayBoard();
+        this.state = State.INGAME;
+        return "";
     }
 
     private int getGameNum() {
