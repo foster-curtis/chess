@@ -9,8 +9,8 @@ public class ClientInGame implements Client {
     private final WebSocketFacade ws;
     private State state = State.INGAME;
 
-    public ClientInGame(int port, AuthData currUserAuth, int gameID) {
-        this.ws = new WebSocketFacade(port);
+    public ClientInGame(int port, AuthData currUserAuth, int gameID, ServerMessageObserver serverMessageObserver) {
+        this.ws = new WebSocketFacade(port, serverMessageObserver);
         this.currentUserAuth = currUserAuth;
 
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, currentUserAuth.authToken(), gameID);
@@ -28,37 +28,41 @@ public class ClientInGame implements Client {
 
     @Override
     public String eval(String input) {
-        switch (input) {
+        return switch (input) {
             case ("2") -> redrawBoard();
             case ("3") -> leave();
             case ("4") -> makeMove();
             case ("5") -> resign();
             case ("6") -> highlightMoves();
             default -> help();
-        }
+        };
+    }
+
+    private String redrawBoard() {
+        //TODO
         return "";
     }
 
-    private void redrawBoard() {
-        //TODO
-    }
-
-    private void leave() {
+    private String leave() {
         this.state = State.LOGGEDIN;
 
         //TODO
+        return "";
     }
 
-    private void makeMove() {
+    private String makeMove() {
         //TODO
+        return "";
     }
 
-    private void resign() {
+    private String resign() {
         //TODO
+        return "";
     }
 
-    private void highlightMoves() {
+    private String highlightMoves() {
         //TODO
+        return "";
     }
 
     @Override

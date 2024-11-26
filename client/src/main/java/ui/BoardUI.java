@@ -4,8 +4,7 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
+import java.lang.StringBuilder;
 import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.BLACK;
@@ -24,72 +23,72 @@ public class BoardUI {
     }
 
     public String displayBoard() {
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        var builder = new StringBuilder();
 
-        out.print(ERASE_SCREEN);
+        builder.append(ERASE_SCREEN);
 
-        drawHeaders(out);
-        drawChessBoard(out);
-        drawHeaders(out);
+        drawHeaders(builder);
+        drawChessBoard(builder);
+        drawHeaders(builder);
 
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_WHITE);
+        builder.append(SET_BG_COLOR_BLACK);
+        builder.append(SET_TEXT_COLOR_WHITE);
 
-        return "";
+        return builder.toString();
     }
 
-    private void drawHeaders(PrintStream out) {
+    private void drawHeaders(StringBuilder builder) {
 
-        out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(SET_TEXT_COLOR_BLUE);
+        builder.append(SET_BG_COLOR_DARK_GREY);
+        builder.append(SET_TEXT_COLOR_BLUE);
 
         String[] headers = {" a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
-        out.print(EMPTY);
+        builder.append(EMPTY);
         if (this.playerColor != BLACK) {
             for (int boardCol = 0; boardCol < 8; ++boardCol) {
-                out.print(headers[boardCol]);
+                builder.append(headers[boardCol]);
             }
         } else {
             for (int boardCol = 7; boardCol >= 0; --boardCol) {
-                out.print(headers[boardCol]);
+                builder.append(headers[boardCol]);
             }
         }
-        out.print(EMPTY);
+        builder.append(EMPTY);
 
-        setBlack(out);
+        setBlack(builder);
 
-        out.println();
+        builder.append("\n");
     }
 
-    private void drawChessBoard(PrintStream out) {
+    private void drawChessBoard(StringBuilder builder) {
 
         String bgColor = SET_BG_COLOR_LIGHT_GREY;
         if (this.playerColor != BLACK) {
             for (int boardRow = 7; boardRow >= 0; --boardRow) {
-                drawRowPreAndPost(out, boardRow);
+                drawRowPreAndPost(builder, boardRow);
                 bgColor = toggleBGColor(bgColor);
-                drawRowOfSquares(out, boardRow, bgColor);
-                drawRowPreAndPost(out, boardRow);
-                out.println();
+                drawRowOfSquares(builder, boardRow, bgColor);
+                drawRowPreAndPost(builder, boardRow);
+                builder.append("\n");
             }
         } else {
             for (int boardRow = 0; boardRow < 8; ++boardRow) {
-                drawRowPreAndPost(out, boardRow);
+                drawRowPreAndPost(builder, boardRow);
                 bgColor = toggleBGColor(bgColor);
-                drawRowOfSquares(out, boardRow, bgColor);
-                drawRowPreAndPost(out, boardRow);
-                out.println();
+                drawRowOfSquares(builder, boardRow, bgColor);
+                drawRowPreAndPost(builder, boardRow);
+                builder.append("\n");
             }
         }
     }
 
-    private void drawRowPreAndPost(PrintStream out, int row) {
-        out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(SET_TEXT_COLOR_BLUE);
+    private void drawRowPreAndPost(StringBuilder builder, int row) {
+        builder.append(SET_BG_COLOR_DARK_GREY);
+        builder.append(SET_TEXT_COLOR_BLUE);
 
-        out.print(" " + (row + 1) + " ");
+        builder.append(" ").append(row + 1).append(" ");
 
-        setBlack(out);
+        setBlack(builder);
     }
 
     private String toggleBGColor(String bgColor) {
@@ -100,39 +99,39 @@ public class BoardUI {
         }
     }
 
-    private void drawRowOfSquares(PrintStream out, int row, String bgColor) {
+    private void drawRowOfSquares(StringBuilder builder, int row, String bgColor) {
 
         if (this.playerColor != BLACK) {
             for (int col = 0; col < 8; ++col) {
                 bgColor = toggleBGColor(bgColor);
-                drawSquare(out, bgColor, row, col);
+                drawSquare(builder, bgColor, row, col);
             }
         } else {
             for (int col = 7; col >= 0; --col) {
                 bgColor = toggleBGColor(bgColor);
-                drawSquare(out, bgColor, row, col);
+                drawSquare(builder, bgColor, row, col);
             }
         }
 
-        setBlack(out);
+        setBlack(builder);
     }
 
-    private void drawSquare(PrintStream out, String bgColor, int row, int col) {
-        out.print(bgColor);
+    private void drawSquare(StringBuilder builder, String bgColor, int row, int col) {
+        builder.append(bgColor);
 
         if (board[row][col] != null) {
-            printPiece(out, row, col);
+            printPiece(builder, row, col);
         } else {
-            out.print(EMPTY);
+            builder.append(EMPTY);
         }
     }
 
-    private static void setBlack(PrintStream out) {
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_BLACK);
+    private static void setBlack(StringBuilder builder) {
+        builder.append(SET_BG_COLOR_BLACK);
+        builder.append(SET_TEXT_COLOR_BLACK);
     }
 
-    private void printPiece(PrintStream out, int row, int col) {
+    private void printPiece(StringBuilder builder, int row, int col) {
 
         String symbol = board[row][col].getPieceType().toString();
         if (Objects.equals(symbol, "KNIGHT")) {
@@ -142,10 +141,10 @@ public class BoardUI {
         }
 
         if (board[row][col].getTeamColor() == WHITE) {
-            out.print(SET_TEXT_COLOR_WHITE);
+            builder.append(SET_TEXT_COLOR_WHITE);
         } else {
-            out.print(SET_TEXT_COLOR_GREEN);
+            builder.append(SET_TEXT_COLOR_GREEN);
         }
-        out.print(symbol.toUpperCase());
+        builder.append(symbol.toUpperCase());
     }
 }

@@ -3,8 +3,8 @@ package ui.websocketmanager;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
-import model.GameData;
 import ui.BoardUI;
+import ui.ServerMessageObserver;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -21,9 +21,12 @@ import static ui.EscapeSequences.*;
 public class WebSocketFacade extends Endpoint {
 
     Session session;
+    private ServerMessageObserver serverMessageObserver;
 
-    public WebSocketFacade(int port) {
+    public WebSocketFacade(int port, ServerMessageObserver serverMessageObserver) {
         try {
+            this.serverMessageObserver = serverMessageObserver;
+
             URI socketURI = new URI("ws://localhost:" + port + "/ws");
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -60,7 +63,7 @@ public class WebSocketFacade extends Endpoint {
 
     private void loadGame(LoadGameMessage s) {
         ChessGame game = s.getGame().game();
-        System.out.println(new BoardUI(game.getBoard()).displayBoard());
+        serverMessageObserver.notify("\n" + new BoardUI(game.getBoard(), s.getColor()).displayBoard());
     }
 
     private void notification(NotificationMessage s) {
