@@ -1,26 +1,24 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessPiece;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 import static ui.EscapeSequences.*;
 
 public class BoardUI {
     private final ChessPiece[][] board;
-    private String playerColor = "WHITE";
+    private final ChessGame.TeamColor playerColor;
 
     private static final String EMPTY = "   ";
 
-    public BoardUI(ChessBoard board) {
-        this.board = board.getBoard();
-    }
-
-    public BoardUI(ChessBoard board, String playerColor) {
+    public BoardUI(ChessBoard board, ChessGame.TeamColor playerColor) {
         this.board = board.getBoard();
         this.playerColor = playerColor;
     }
@@ -47,7 +45,7 @@ public class BoardUI {
 
         String[] headers = {" a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
         out.print(EMPTY);
-        if (Objects.equals(this.playerColor, "WHITE")) {
+        if (this.playerColor != BLACK) {
             for (int boardCol = 0; boardCol < 8; ++boardCol) {
                 out.print(headers[boardCol]);
             }
@@ -66,7 +64,7 @@ public class BoardUI {
     private void drawChessBoard(PrintStream out) {
 
         String bgColor = SET_BG_COLOR_LIGHT_GREY;
-        if (Objects.equals(this.playerColor, "WHITE")) {
+        if (this.playerColor != BLACK) {
             for (int boardRow = 7; boardRow >= 0; --boardRow) {
                 drawRowPreAndPost(out, boardRow);
                 bgColor = toggleBGColor(bgColor);
@@ -104,7 +102,7 @@ public class BoardUI {
 
     private void drawRowOfSquares(PrintStream out, int row, String bgColor) {
 
-        if (Objects.equals(this.playerColor, "WHITE")) {
+        if (this.playerColor != BLACK) {
             for (int col = 0; col < 8; ++col) {
                 bgColor = toggleBGColor(bgColor);
                 drawSquare(out, bgColor, row, col);
