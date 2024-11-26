@@ -27,6 +27,11 @@ public class ClientMain implements Client {
     }
 
     @Override
+    public Integer getGameID() {
+        return 0;
+    }
+
+    @Override
     public State getState() {
         return state;
     }

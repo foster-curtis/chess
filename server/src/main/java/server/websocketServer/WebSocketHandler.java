@@ -1,11 +1,13 @@
 package server.websocketServer;
 
+import chess.ChessGame;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import model.GameData;
 import model.GameUsernamePackage;
 import model.MakeMoveResponse;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -22,6 +24,7 @@ import websocket.messages.NotificationMessage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
@@ -55,7 +58,9 @@ public class WebSocketHandler {
                 connectionManager.addToGame(command.getGameID(), session);
                 gameActive.putIfAbsent(command.getGameID(), true);
 
-                var message = new LoadGameMessage(pack.gameData());
+                var color = getColor(pack.gameData(), pack.username());
+
+                var message = new LoadGameMessage(pack.gameData(), color);
                 sendMessage(new Gson().toJson(message), session);
 
                 SendNotificationBroadcast(pack.username() + " has joined the game.", command.getGameID(), session);
@@ -73,7 +78,9 @@ public class WebSocketHandler {
 
                 MakeMoveResponse res = service.makeMove(command);
 
-                broadcast(command.getGameID(), new Gson().toJson(new LoadGameMessage(res.gameData())), null);
+                var color = getColor(res.gameData(), res.username());
+
+                broadcast(command.getGameID(), new Gson().toJson(new LoadGameMessage(res.gameData(), color)), null);
                 SendNotificationBroadcast(res.username() + " has made a move.", command.getGameID(), session);
 
                 if (res.inCheckmate()) {
@@ -130,6 +137,16 @@ public class WebSocketHandler {
 
     private void sendErrorMessage(String message, Session session) throws IOException {
         sendMessage(new Gson().toJson(new ErrorMessage(message)), session);
+    }
+
+    private ChessGame.TeamColor getColor(GameData game, String username) {
+        ChessGame.TeamColor color = null;
+        if (Objects.equals(game.whiteUsername(), username)) {
+            color = ChessGame.TeamColor.WHITE;
+        } else if (Objects.equals(game.blackUsername(), username)) {
+            color = ChessGame.TeamColor.BLACK;
+        }
+        return color;
     }
 
     private void sendMessage(String message, Session session) throws IOException {

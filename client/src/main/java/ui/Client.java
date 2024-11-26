@@ -11,4 +11,6 @@ public interface Client {
     String help();
 
     AuthData getCurrentUserAuth();
+
+    Integer getGameID();
 }

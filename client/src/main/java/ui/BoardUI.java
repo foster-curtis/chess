@@ -16,11 +16,11 @@ public class BoardUI {
 
     private static final String EMPTY = "   ";
 
-    BoardUI(ChessBoard board) {
+    public BoardUI(ChessBoard board) {
         this.board = board.getBoard();
     }
 
-    BoardUI(ChessBoard board, String playerColor) {
+    public BoardUI(ChessBoard board, String playerColor) {
         this.board = board.getBoard();
         this.playerColor = playerColor;
     }

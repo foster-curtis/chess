@@ -1,11 +1,22 @@
 package ui.websocketmanager;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import exception.ResponseException;
+import model.GameData;
+import ui.BoardUI;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import static ui.EscapeSequences.*;
 
 public class WebSocketFacade extends Endpoint {
 
@@ -22,7 +33,23 @@ public class WebSocketFacade extends Endpoint {
 
                 @Override
                 public void onMessage(String msg) {
-                    System.out.println(msg);
+                    ServerMessage message = new Gson().fromJson(msg, ServerMessage.class);
+                    var type = message.getServerMessageType();
+
+                    switch (type) {
+                        case ServerMessage.ServerMessageType.LOAD_GAME -> {
+                            LoadGameMessage loadGameMessage = new Gson().fromJson(msg, LoadGameMessage.class);
+                            loadGame(loadGameMessage);
+                        }
+                        case ServerMessage.ServerMessageType.NOTIFICATION -> {
+                            NotificationMessage notificationMessage = new Gson().fromJson(msg, NotificationMessage.class);
+                            notification(notificationMessage);
+                        }
+                        case ServerMessage.ServerMessageType.ERROR -> {
+                            ErrorMessage errorMessage = new Gson().fromJson(msg, ErrorMessage.class);
+                            error(errorMessage);
+                        }
+                    }
                 }
             });
 
@@ -31,7 +58,21 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void send(String msg) throws Exception {
+    private void loadGame(LoadGameMessage s) {
+        ChessGame game = s.getGame().game();
+        System.out.println(new BoardUI(game.getBoard()).displayBoard());
+    }
+
+    private void notification(NotificationMessage s) {
+        System.out.println(SET_TEXT_COLOR_GREEN + s.getMessage() + SET_TEXT_COLOR_WHITE);
+    }
+
+    private void error(ErrorMessage s) {
+        System.out.println(SET_TEXT_COLOR_RED + s.getErrorMessage() + SET_TEXT_COLOR_WHITE);
+    }
+
+    public void send(UserGameCommand command) throws Exception {
+        var msg = new Gson().toJson(command);
         this.session.getBasicRemote().sendText(msg);
     }
 

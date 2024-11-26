@@ -2,15 +2,23 @@ package ui;
 
 import model.AuthData;
 import ui.websocketmanager.WebSocketFacade;
+import websocket.commands.UserGameCommand;
 
 public class ClientInGame implements Client {
     private final AuthData currentUserAuth;
     private final WebSocketFacade ws;
     private State state = State.INGAME;
 
-    public ClientInGame(int port, AuthData currUserAuth) {
+    public ClientInGame(int port, AuthData currUserAuth, int gameID) {
         this.ws = new WebSocketFacade(port);
         this.currentUserAuth = currUserAuth;
+
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, currentUserAuth.authToken(), gameID);
+        try {
+            ws.send(command);
+        } catch (Exception e) {
+            System.out.println("You haven't handled this error yet");
+        }
     }
 
     @Override
@@ -32,23 +40,25 @@ public class ClientInGame implements Client {
     }
 
     private void redrawBoard() {
-
+        //TODO
     }
 
     private void leave() {
+        this.state = State.LOGGEDIN;
 
+        //TODO
     }
 
     private void makeMove() {
-
+        //TODO
     }
 
     private void resign() {
-
+        //TODO
     }
 
     private void highlightMoves() {
-
+        //TODO
     }
 
     @Override
@@ -66,5 +76,10 @@ public class ClientInGame implements Client {
     @Override
     public AuthData getCurrentUserAuth() {
         return this.currentUserAuth;
+    }
+
+    @Override
+    public Integer getGameID() {
+        return 0;
     }
 }

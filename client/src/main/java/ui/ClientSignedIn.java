@@ -17,6 +17,7 @@ public class ClientSignedIn implements Client {
     private final Scanner scanner = new Scanner(System.in);
     private final HashMap<Integer, Integer> gameMap = new HashMap<>();
     private int numGames = 0;
+    private int gameID = 0;
 
     public ClientSignedIn(int port, AuthData currUserAuth) {
         this.server = new ServerFacade(port);
@@ -109,8 +110,11 @@ public class ClientSignedIn implements Client {
         } catch (Exception e) {
             return SET_TEXT_COLOR_RED + "Error: " + e.getMessage() + SET_TEXT_COLOR_WHITE;
         }
+
         System.out.println(SET_TEXT_COLOR_GREEN + "Successfully joined game " + num + " as " + color);
         System.out.print(SET_TEXT_COLOR_WHITE);
+        this.state = State.INGAME;
+        this.gameID = num;
         return "";
     }
 
@@ -119,6 +123,7 @@ public class ClientSignedIn implements Client {
         System.out.println(SET_TEXT_COLOR_GREEN + "Successfully joined game " + num + " as an observer.");
         System.out.print(SET_TEXT_COLOR_WHITE);
         this.state = State.INGAME;
+        this.gameID = num;
         return "";
     }
 
@@ -152,5 +157,10 @@ public class ClientSignedIn implements Client {
     @Override
     public AuthData getCurrentUserAuth() {
         return currentUserAuth;
+    }
+
+    @Override
+    public Integer getGameID() {
+        return gameID;
     }
 }
