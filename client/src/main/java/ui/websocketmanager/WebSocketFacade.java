@@ -83,7 +83,7 @@ public class WebSocketFacade extends Endpoint {
         System.out.println(SET_TEXT_COLOR_RED + s.getErrorMessage() + SET_TEXT_COLOR_WHITE);
     }
 
-    public void send(UserGameCommand command) throws Exception {
+    public void send(UserGameCommand command) throws IOException {
         var msg = new Gson().toJson(command);
         this.session.getBasicRemote().sendText(msg);
     }

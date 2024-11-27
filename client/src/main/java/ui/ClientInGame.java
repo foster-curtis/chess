@@ -5,9 +5,12 @@ import model.AuthData;
 import ui.websocketmanager.WebSocketFacade;
 import websocket.commands.UserGameCommand;
 
+import java.io.IOException;
+
 public class ClientInGame implements Client {
     private final AuthData currentUserAuth;
     private final WebSocketFacade ws;
+    private Integer gameID;
     private State state = State.INGAME;
     private ChessGame chessGame;
     private ChessGame.TeamColor player_color;
@@ -15,12 +18,13 @@ public class ClientInGame implements Client {
     public ClientInGame(int port, AuthData currUserAuth, int gameID, ServerMessageObserver serverMessageObserver) {
         this.ws = new WebSocketFacade(port, serverMessageObserver, this);
         this.currentUserAuth = currUserAuth;
+        this.gameID = gameID;
 
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, currentUserAuth.authToken(), gameID);
         try {
             ws.send(command);
-        } catch (Exception e) {
-            System.out.println("You haven't handled this error yet");
+        } catch (IOException e) {
+            System.out.println("You haven't handled this IO error yet");
         }
     }
 
@@ -48,7 +52,11 @@ public class ClientInGame implements Client {
     private String leave() {
         this.state = State.LOGGEDIN;
 
-        //TODO
+        try {
+            ws.send(new UserGameCommand(UserGameCommand.CommandType.LEAVE, currentUserAuth.authToken(), this.gameID));
+        } catch (IOException e) {
+            System.out.println("You haven't handled this IO error yet");
+        }
         return "";
     }
 
@@ -86,7 +94,7 @@ public class ClientInGame implements Client {
 
     @Override
     public Integer getGameID() {
-        return 0;
+        return this.gameID;
     }
 
     public void setChessGame(ChessGame chessGame) {

@@ -38,10 +38,7 @@ public class Repl implements ServerMessageObserver {
             if (Objects.equals(result, "quit")) {
                 break;
             }
-            this.client = new ClientSignedIn(port, client.getCurrentUserAuth());
-            System.out.println("Now that you're logged in, you have some new commands available!");
-            System.out.println(client.help());
-            System.out.print(">>> ");
+            newSignedInClient(false);
 
             while (client.getState() == State.LOGGEDIN) {
                 loop(result, scanner);
@@ -55,6 +52,8 @@ public class Repl implements ServerMessageObserver {
                     while (client.getState() == State.INGAME) {
                         loop(result, scanner);
                     }
+
+                    newSignedInClient(true);
                 }
             }
         }
@@ -74,6 +73,15 @@ public class Repl implements ServerMessageObserver {
         }
         System.out.print(">>> ");
         return result;
+    }
+
+    private void newSignedInClient(Boolean fromGame) {
+        this.client = new ClientSignedIn(port, client.getCurrentUserAuth());
+        if (!fromGame) {
+            System.out.println("Now that you're logged in, you have some new commands available!");
+        }
+        System.out.println(!fromGame ? client.help() : "\n" + client.help());
+        System.out.print(">>> ");
     }
 
 
