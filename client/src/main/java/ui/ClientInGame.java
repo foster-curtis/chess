@@ -1,15 +1,13 @@
 package ui;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import model.AuthData;
 import ui.websocketmanager.WebSocketFacade;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static chess.ChessGame.TeamColor.*;
@@ -34,7 +32,7 @@ public class ClientInGame implements Client {
         try {
             ws.send(command);
         } catch (IOException e) {
-            System.out.println("You haven't handled this IO error yet");
+            System.out.println("Unhandled IO error.");
         }
     }
 
@@ -66,7 +64,7 @@ public class ClientInGame implements Client {
         try {
             ws.send(new UserGameCommand(UserGameCommand.CommandType.LEAVE, currentUserAuth.authToken(), this.gameID));
         } catch (IOException e) {
-            System.out.println("You haven't handled this IO error yet");
+            System.out.println("Unhandled IO error.");
         }
         return "";
     }
@@ -81,7 +79,7 @@ public class ClientInGame implements Client {
                 Input the start and end coordinates as column (letter) and then row (number).
                     Ex: d2 d4
                 """);
-        while (start == null && end == null) {
+        while (start == null || end == null) {
             System.out.print(">>> ");
             var input = scanner.nextLine();
             var moves = input.split(" ");
@@ -90,6 +88,9 @@ public class ClientInGame implements Client {
             } else {
                 start = checkAndSetCoordinate(moves[0]);
                 end = checkAndSetCoordinate(moves[1]);
+                if (start == null || end == null) {
+                    continue;
+                }
                 var pieceType = chessGame.getBoard().getPiece(start).getPieceType();
                 if (pieceType == ChessPiece.PieceType.PAWN) {
                     if (player_color == BLACK && end.getRow() == 1) {
@@ -104,7 +105,7 @@ public class ClientInGame implements Client {
         try {
             ws.send(new MakeMoveCommand(currentUserAuth.authToken(), this.gameID, new ChessMove(start, end, promotionPiece)));
         } catch (IOException e) {
-            System.out.println("You haven't handled this IO error yet");
+            System.out.println("Unhandled IO error.");
         }
 
         return "";
@@ -115,6 +116,7 @@ public class ClientInGame implements Client {
         if (move.length() != 2) {
             System.out.println(SET_TEXT_COLOR_RED + "Invalid coordinate length: " + move.length() + " (Should be 2)");
             System.out.print(SET_TEXT_COLOR_WHITE);
+            return null;
         } else {
             try {
                 position = new ChessPosition(Integer.parseInt(String.valueOf(move.charAt(1))), switch (move.charAt(0)) {
@@ -153,12 +155,32 @@ public class ClientInGame implements Client {
     }
 
     private String resign() {
-        //TODO
+        boolean done = false;
+        while (!done) {
+            System.out.println("Are you sure you want to resign? (Y/N)");
+            var input = scanner.nextLine();
+            if (Objects.equals(input.toUpperCase(), "Y")) {
+                done = true;
+                UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, currentUserAuth.authToken(), gameID);
+                try {
+                    ws.send(command);
+                } catch (IOException e) {
+                    System.out.println("Unhandled IO error.");
+                }
+            } else if (Objects.equals(input.toUpperCase(), "N")) {
+                done = true;
+                System.out.println("Press on! Do your best!");
+            } else {
+                System.out.println(SET_TEXT_COLOR_RED + "Invalid input. Please try again." + SET_TEXT_COLOR_WHITE);
+            }
+        }
         return "";
     }
 
     private String highlightMoves() {
-        //TODO
+        //ChessBoard board = chessGame.getBoard();
+
+
         return "";
     }
 
