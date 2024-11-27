@@ -5,6 +5,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import ui.BoardUI;
+import ui.ClientInGame;
 import ui.ServerMessageObserver;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
@@ -23,12 +24,12 @@ public class WebSocketFacade extends Endpoint {
 
     Session session;
     private final ServerMessageObserver serverMessageObserver;
-    public ChessGame chessGame;
-    public ChessGame.TeamColor player_color;
+    private final ClientInGame client;
 
-    public WebSocketFacade(int port, ServerMessageObserver serverMessageObserver) {
+    public WebSocketFacade(int port, ServerMessageObserver serverMessageObserver, ClientInGame client) {
         try {
             this.serverMessageObserver = serverMessageObserver;
+            this.client = client;
 
             URI socketURI = new URI("ws://localhost:" + port + "/ws");
 
@@ -66,7 +67,11 @@ public class WebSocketFacade extends Endpoint {
 
     private void loadGame(LoadGameMessage s) {
         ChessGame game = s.getGame().game();
-        this.chessGame = game;
+
+        //Store the game info in the client for when we call redrawBoard
+        client.setChessGame(game);
+        client.setPlayer_color(s.getColor());
+
         serverMessageObserver.notify("\n" + new BoardUI(game.getBoard(), s.getColor()).displayBoard());
     }
 

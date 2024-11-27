@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import model.AuthData;
 import ui.websocketmanager.WebSocketFacade;
 import websocket.commands.UserGameCommand;
@@ -8,9 +9,11 @@ public class ClientInGame implements Client {
     private final AuthData currentUserAuth;
     private final WebSocketFacade ws;
     private State state = State.INGAME;
+    private ChessGame chessGame;
+    private ChessGame.TeamColor player_color;
 
     public ClientInGame(int port, AuthData currUserAuth, int gameID, ServerMessageObserver serverMessageObserver) {
-        this.ws = new WebSocketFacade(port, serverMessageObserver);
+        this.ws = new WebSocketFacade(port, serverMessageObserver, this);
         this.currentUserAuth = currUserAuth;
 
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, currentUserAuth.authToken(), gameID);
@@ -39,8 +42,7 @@ public class ClientInGame implements Client {
     }
 
     private String redrawBoard() {
-        //TODO
-        return "";
+        return new BoardUI(chessGame.getBoard(), player_color).displayBoard();
     }
 
     private String leave() {
@@ -85,5 +87,13 @@ public class ClientInGame implements Client {
     @Override
     public Integer getGameID() {
         return 0;
+    }
+
+    public void setChessGame(ChessGame chessGame) {
+        this.chessGame = chessGame;
+    }
+
+    public void setPlayer_color(ChessGame.TeamColor player_color) {
+        this.player_color = player_color;
     }
 }
