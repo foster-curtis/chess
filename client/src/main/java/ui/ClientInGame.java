@@ -7,6 +7,7 @@ import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -55,7 +56,7 @@ public class ClientInGame implements Client {
     }
 
     private String redrawBoard() {
-        return new BoardUI(chessGame.getBoard(), player_color).displayBoard();
+        return new BoardUI(chessGame.getBoard(), player_color).displayBoard(null, null);
     }
 
     private String leave() {
@@ -178,10 +179,17 @@ public class ClientInGame implements Client {
     }
 
     private String highlightMoves() {
-        //ChessBoard board = chessGame.getBoard();
+        ChessBoard board = chessGame.getBoard();
 
+        System.out.println("Input the coordinates for the piece you want to check.");
+        System.out.println(">>> ");
 
-        return "";
+        var input = scanner.nextLine();
+
+        var position = checkAndSetCoordinate(input);
+        Collection<ChessMove> moves = chessGame.validMoves(position);
+
+        return new BoardUI(board, player_color).displayBoard(moves, new ChessMove(position, null, null));
     }
 
     @Override

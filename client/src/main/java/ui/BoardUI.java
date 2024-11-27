@@ -1,10 +1,9 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
+import chess.*;
 
 import java.lang.StringBuilder;
+import java.util.Collection;
 import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.BLACK;
@@ -14,6 +13,8 @@ import static ui.EscapeSequences.*;
 public class BoardUI {
     private final ChessPiece[][] board;
     private final ChessGame.TeamColor playerColor;
+    private Collection<ChessMove> validMoves;
+    private ChessMove move;
 
     private static final String EMPTY = "   ";
 
@@ -22,7 +23,10 @@ public class BoardUI {
         this.playerColor = playerColor;
     }
 
-    public String displayBoard() {
+    public String displayBoard(Collection<ChessMove> validMoves, ChessMove move) {
+        this.validMoves = validMoves;
+        this.move = move;
+
         var builder = new StringBuilder();
 
         builder.append(ERASE_SCREEN);
@@ -33,6 +37,7 @@ public class BoardUI {
 
         builder.append(SET_BG_COLOR_BLACK);
         builder.append(SET_TEXT_COLOR_WHITE);
+        builder.append("\n");
 
         return builder.toString();
     }
@@ -63,23 +68,33 @@ public class BoardUI {
     private void drawChessBoard(StringBuilder builder) {
 
         String bgColor = SET_BG_COLOR_LIGHT_GREY;
+        String highlightColor = SET_BG_COLOR_LIGHT_PURPLE;
+
         if (this.playerColor != BLACK) {
             for (int boardRow = 7; boardRow >= 0; --boardRow) {
-                drawRowPreAndPost(builder, boardRow);
                 bgColor = toggleBGColor(bgColor);
-                drawRowOfSquares(builder, boardRow, bgColor);
-                drawRowPreAndPost(builder, boardRow);
-                builder.append("\n");
+                highlightColor = toggleHighlightColor(highlightColor);
+
+                drawBoardHelper(builder, boardRow, bgColor, highlightColor);
             }
         } else {
             for (int boardRow = 0; boardRow < 8; ++boardRow) {
-                drawRowPreAndPost(builder, boardRow);
                 bgColor = toggleBGColor(bgColor);
-                drawRowOfSquares(builder, boardRow, bgColor);
-                drawRowPreAndPost(builder, boardRow);
-                builder.append("\n");
+                highlightColor = toggleHighlightColor(highlightColor);
+
+                drawBoardHelper(builder, boardRow, bgColor, highlightColor);
             }
         }
+    }
+
+    private void drawBoardHelper(StringBuilder builder, int boardRow, String bgColor, String highlightColor) {
+        drawRowPreAndPost(builder, boardRow);
+
+        drawRowOfSquares(builder, boardRow, bgColor, highlightColor);
+
+        drawRowPreAndPost(builder, boardRow);
+
+        builder.append("\n");
     }
 
     private void drawRowPreAndPost(StringBuilder builder, int row) {
@@ -99,25 +114,52 @@ public class BoardUI {
         }
     }
 
-    private void drawRowOfSquares(StringBuilder builder, int row, String bgColor) {
+    private String toggleHighlightColor(String bgColor) {
+        if (Objects.equals(bgColor, SET_BG_COLOR_LIGHT_PURPLE)) {
+            return SET_BG_COLOR_PINK;
+        } else {
+            return SET_BG_COLOR_LIGHT_PURPLE;
+        }
+    }
+
+    private void drawRowOfSquares(StringBuilder builder, int row, String bgColor, String highlightColor) {
 
         if (this.playerColor != BLACK) {
             for (int col = 0; col < 8; ++col) {
                 bgColor = toggleBGColor(bgColor);
-                drawSquare(builder, bgColor, row, col);
+                highlightColor = toggleHighlightColor(highlightColor);
+                drawSquare(builder, bgColor, highlightColor, row, col);
             }
         } else {
             for (int col = 7; col >= 0; --col) {
                 bgColor = toggleBGColor(bgColor);
-                drawSquare(builder, bgColor, row, col);
+                highlightColor = toggleHighlightColor(highlightColor);
+                drawSquare(builder, bgColor, highlightColor, row, col);
             }
         }
 
         setBlack(builder);
     }
 
-    private void drawSquare(StringBuilder builder, String bgColor, int row, int col) {
+    private void drawSquare(StringBuilder builder, String bgColor, String highlightColor, int row, int col) {
         builder.append(bgColor);
+
+        if (validMoves != null) {
+            for (var chessMove : validMoves) {
+                if (new ChessPosition(row + 1, col + 1).equals(chessMove.getEndPosition())) {
+                    builder.append(highlightColor);
+                }
+            }
+        }
+        if (move != null) {
+            if (Objects.equals(new ChessPosition(row + 1, col + 1), move.getStartPosition())) {
+                builder.append(SET_BG_COLOR_RED);
+            }
+
+            if (validMoves == null && move.getEndPosition() != null && Objects.equals(new ChessPosition(row + 1, col + 1), move.getEndPosition())) {
+                builder.append(SET_BG_COLOR_RED);
+            }
+        }
 
         if (board[row][col] != null) {
             printPiece(builder, row, col);

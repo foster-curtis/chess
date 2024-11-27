@@ -71,7 +71,7 @@ public class WebSocketFacade extends Endpoint {
         client.setChessGame(game);
         client.setPlayer_color(s.getColor());
 
-        serverMessageObserver.notify("\n" + new BoardUI(game.getBoard(), s.getColor()).displayBoard());
+        serverMessageObserver.notify("\n" + new BoardUI(game.getBoard(), s.getColor()).displayBoard(null, null));
     }
 
     private void notification(NotificationMessage s) {
