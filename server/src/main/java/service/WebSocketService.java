@@ -61,9 +61,10 @@ public class WebSocketService extends Service {
         if (!Objects.equals(authData.username(), gameData.whiteUsername()) && !Objects.equals(authData.username(), gameData.blackUsername())) {
             throw new InvalidMoveException("You are an observer. You cannot make a move.");
         }
-        if (color == ChessGame.TeamColor.WHITE && !Objects.equals(authData.username(), gameData.whiteUsername())) {
+        var pieceColor = game.getBoard().getPiece(move.getStartPosition()).getTeamColor();
+        if (pieceColor == ChessGame.TeamColor.WHITE && !Objects.equals(authData.username(), gameData.whiteUsername())) {
             throw new InvalidMoveException("That is not your piece!");
-        } else if (color == ChessGame.TeamColor.BLACK && !Objects.equals(authData.username(), gameData.blackUsername())) {
+        } else if (pieceColor == ChessGame.TeamColor.BLACK && !Objects.equals(authData.username(), gameData.blackUsername())) {
             throw new InvalidMoveException("That is not your piece!");
         }
 
