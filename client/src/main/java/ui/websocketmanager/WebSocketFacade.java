@@ -1,5 +1,6 @@
 package ui.websocketmanager;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
@@ -21,7 +22,9 @@ import static ui.EscapeSequences.*;
 public class WebSocketFacade extends Endpoint {
 
     Session session;
-    private ServerMessageObserver serverMessageObserver;
+    private final ServerMessageObserver serverMessageObserver;
+    public ChessGame chessGame;
+    public ChessGame.TeamColor player_color;
 
     public WebSocketFacade(int port, ServerMessageObserver serverMessageObserver) {
         try {
@@ -63,6 +66,7 @@ public class WebSocketFacade extends Endpoint {
 
     private void loadGame(LoadGameMessage s) {
         ChessGame game = s.getGame().game();
+        this.chessGame = game;
         serverMessageObserver.notify("\n" + new BoardUI(game.getBoard(), s.getColor()).displayBoard());
     }
 

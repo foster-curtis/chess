@@ -6,7 +6,7 @@ import java.util.Scanner;
 import static ui.EscapeSequences.SET_BG_COLOR_BLACK;
 import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
 
-public class Repl {
+public class Repl implements ServerMessageObserver {
     public Client client;
     private final int port;
 
@@ -22,6 +22,7 @@ public class Repl {
         System.out.println("Press enter at any time to view the help menu.");
         System.out.println("\nType in a number and press enter to execute a command:");
         System.out.print(client.help());
+        System.out.print(">>> ");
 
         Scanner scanner = new Scanner(System.in);
         String result = "";
@@ -40,17 +41,20 @@ public class Repl {
             this.client = new ClientSignedIn(port, client.getCurrentUserAuth());
             System.out.println("Now that you're logged in, you have some new commands available!");
             System.out.println(client.help());
+            System.out.print(">>> ");
 
             while (client.getState() == State.LOGGEDIN) {
-                result = loop(result, scanner);
+                loop(result, scanner);
                 if (client.getState() == State.INGAME) {
-                    this.client = new ClientInGame(port, client.getCurrentUserAuth(), client.getGameID());
+                    this.client = new ClientInGame(port, client.getCurrentUserAuth(), client.getGameID(), this);
                     System.out.println("Here are your new commands while in the game!\n" +
                             "Press enter at any time to view them again.");
                     System.out.println(client.help());
-                }
-                while (client.getState() == State.INGAME) {
-                    result = loop(result, scanner);
+                    System.out.print(">>> ");
+
+                    while (client.getState() == State.INGAME) {
+                        loop(result, scanner);
+                    }
                 }
             }
         }
@@ -59,7 +63,6 @@ public class Repl {
     }
 
     private String loop(String result, Scanner scanner) {
-        System.out.print(">>> ");
         String input = scanner.nextLine();
 
         try {
@@ -69,6 +72,14 @@ public class Repl {
             var msg = e.toString();
             System.out.println(msg);
         }
+        System.out.print(">>> ");
         return result;
+    }
+
+
+    @Override
+    public void notify(String notification) {
+        System.out.println(notification);
+        System.out.print(">>> ");
     }
 }
