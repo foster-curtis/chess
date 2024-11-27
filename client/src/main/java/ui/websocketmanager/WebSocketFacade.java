@@ -1,6 +1,5 @@
 package ui.websocketmanager;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;

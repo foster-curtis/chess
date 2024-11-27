@@ -1,15 +1,25 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import model.AuthData;
 import ui.websocketmanager.WebSocketFacade;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
+import java.util.Scanner;
+
+import static chess.ChessGame.TeamColor.*;
+import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
+import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
 
 public class ClientInGame implements Client {
     private final AuthData currentUserAuth;
     private final WebSocketFacade ws;
+    private final Scanner scanner = new Scanner(System.in);
     private Integer gameID;
     private State state = State.INGAME;
     private ChessGame chessGame;
@@ -35,6 +45,7 @@ public class ClientInGame implements Client {
 
     @Override
     public String eval(String input) {
+
         return switch (input) {
             case ("2") -> redrawBoard();
             case ("3") -> leave();
@@ -61,8 +72,84 @@ public class ClientInGame implements Client {
     }
 
     private String makeMove() {
-        //TODO
+
+        ChessPosition start = null;
+        ChessPosition end = null;
+        ChessPiece.PieceType promotionPiece = null;
+
+        System.out.print("""
+                Input the start and end coordinates as column (letter) and then row (number).
+                    Ex: d2 d4
+                """);
+        while (start == null && end == null) {
+            System.out.print(">>> ");
+            var input = scanner.nextLine();
+            var moves = input.split(" ");
+            if (moves.length != 2) {
+                System.out.println(SET_TEXT_COLOR_RED + "Incorrect number of coordinates." + SET_TEXT_COLOR_WHITE);
+            } else {
+                start = checkAndSetCoordinate(moves[0]);
+                end = checkAndSetCoordinate(moves[1]);
+                var pieceType = chessGame.getBoard().getPiece(start).getPieceType();
+                if (pieceType == ChessPiece.PieceType.PAWN) {
+                    if (player_color == BLACK && end.getRow() == 1) {
+                        promotionPiece = getPromotionPiece();
+                    } else if (player_color == WHITE && end.getRow() == 8) {
+                        promotionPiece = getPromotionPiece();
+                    }
+                }
+            }
+        }
+
+        try {
+            ws.send(new MakeMoveCommand(currentUserAuth.authToken(), this.gameID, new ChessMove(start, end, promotionPiece)));
+        } catch (IOException e) {
+            System.out.println("You haven't handled this IO error yet");
+        }
+
         return "";
+    }
+
+    private ChessPosition checkAndSetCoordinate(String move) {
+        ChessPosition position = null;
+        if (move.length() != 2) {
+            System.out.println(SET_TEXT_COLOR_RED + "Invalid coordinate length: " + move.length() + " (Should be 2)");
+            System.out.print(SET_TEXT_COLOR_WHITE);
+        } else {
+            try {
+                position = new ChessPosition(Integer.parseInt(String.valueOf(move.charAt(1))), switch (move.charAt(0)) {
+                    case ('a') -> 1;
+                    case ('b') -> 2;
+                    case ('c') -> 3;
+                    case ('d') -> 4;
+                    case ('e') -> 5;
+                    case ('f') -> 6;
+                    case ('g') -> 7;
+                    case ('h') -> 8;
+                    default -> throw new Exception(SET_TEXT_COLOR_RED + "Invalid column.");
+                });
+            } catch (Exception e) {
+                System.out.println(e.getMessage() + SET_TEXT_COLOR_WHITE);
+            }
+        }
+        return position;
+    }
+
+    private ChessPiece.PieceType getPromotionPiece() {
+        System.out.println("""
+                Your pawn can be promoted! What piece type should it promote to?
+                1. Knight
+                2. Bishop
+                3. Rook
+                4. Queen
+                """);
+        var input = scanner.nextLine();
+        return switch (input) {
+            case ("1") -> ChessPiece.PieceType.KNIGHT;
+            case ("2") -> ChessPiece.PieceType.BISHOP;
+            case ("3") -> ChessPiece.PieceType.ROOK;
+            default -> ChessPiece.PieceType.QUEEN;
+        };
     }
 
     private String resign() {
