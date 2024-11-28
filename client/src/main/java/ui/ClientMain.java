@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import model.*;
 import ui.serverfacade.ServerFacade;
 
@@ -29,6 +30,11 @@ public class ClientMain implements Client {
     @Override
     public Integer getGameID() {
         return 0;
+    }
+
+    @Override
+    public ChessGame.TeamColor getPlayerColor() {
+        return null;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import model.AuthData;
 
 public interface Client {
@@ -13,4 +14,6 @@ public interface Client {
     AuthData getCurrentUserAuth();
 
     Integer getGameID();
+
+    ChessGame.TeamColor getPlayerColor();
 }

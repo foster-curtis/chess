@@ -69,9 +69,8 @@ public class WebSocketFacade extends Endpoint {
 
         //Store the game info in the client for when we call redrawBoard
         client.setChessGame(game);
-        client.setPlayer_color(s.getColor());
 
-        serverMessageObserver.notify("\n" + new BoardUI(game.getBoard(), s.getColor()).displayBoard(null, null));
+        serverMessageObserver.notify("\n" + new BoardUI(game.getBoard(), client.getPlayerColor()).displayBoard(null, null));
     }
 
     private void notification(NotificationMessage s) {

@@ -43,7 +43,7 @@ public class Repl implements ServerMessageObserver {
             while (client.getState() == State.LOGGEDIN) {
                 loop(result, scanner);
                 if (client.getState() == State.INGAME) {
-                    this.client = new ClientInGame(port, client.getCurrentUserAuth(), client.getGameID(), this);
+                    this.client = new ClientInGame(port, client.getCurrentUserAuth(), client.getGameID(), client.getPlayerColor(), this);
                     System.out.println("Here are your new commands while in the game!\n" +
                             "Press enter at any time to view them again.");
                     System.out.println(client.help());

@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.JoinRequest;
@@ -18,6 +19,7 @@ public class ClientSignedIn implements Client {
     private final HashMap<Integer, Integer> gameMap = new HashMap<>();
     private int numGames = 0;
     private int gameID = 0;
+    private ChessGame.TeamColor playerColor;
 
     public ClientSignedIn(int port, AuthData currUserAuth) {
         this.server = new ServerFacade(port);
@@ -113,8 +115,17 @@ public class ClientSignedIn implements Client {
 
         System.out.println(SET_TEXT_COLOR_GREEN + "Successfully joined game " + num + " as " + color);
         System.out.print(SET_TEXT_COLOR_WHITE);
+
+        ChessGame.TeamColor playerColor;
+        if (color.equals("WHITE")) {
+            playerColor = ChessGame.TeamColor.WHITE;
+        } else {
+            playerColor = ChessGame.TeamColor.BLACK;
+        }
+
         this.state = State.INGAME;
         this.gameID = num;
+        this.playerColor = playerColor;
         return "";
     }
 
@@ -162,5 +173,10 @@ public class ClientSignedIn implements Client {
     @Override
     public Integer getGameID() {
         return gameID;
+    }
+
+    @Override
+    public ChessGame.TeamColor getPlayerColor() {
+        return this.playerColor;
     }
 }

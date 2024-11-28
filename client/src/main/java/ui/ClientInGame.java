@@ -19,15 +19,16 @@ public class ClientInGame implements Client {
     private final AuthData currentUserAuth;
     private final WebSocketFacade ws;
     private final Scanner scanner = new Scanner(System.in);
-    private Integer gameID;
+    private final Integer gameID;
     private State state = State.INGAME;
     private ChessGame chessGame;
-    private ChessGame.TeamColor player_color;
+    private final ChessGame.TeamColor player_color;
 
-    public ClientInGame(int port, AuthData currUserAuth, int gameID, ServerMessageObserver serverMessageObserver) {
+    public ClientInGame(int port, AuthData currUserAuth, int gameID, ChessGame.TeamColor playerColor, ServerMessageObserver serverMessageObserver) {
         this.ws = new WebSocketFacade(port, serverMessageObserver, this);
         this.currentUserAuth = currUserAuth;
         this.gameID = gameID;
+        this.player_color = playerColor;
 
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, currentUserAuth.authToken(), gameID);
         try {
@@ -214,11 +215,12 @@ public class ClientInGame implements Client {
         return this.gameID;
     }
 
-    public void setChessGame(ChessGame chessGame) {
-        this.chessGame = chessGame;
+    @Override
+    public ChessGame.TeamColor getPlayerColor() {
+        return this.player_color;
     }
 
-    public void setPlayer_color(ChessGame.TeamColor player_color) {
-        this.player_color = player_color;
+    public void setChessGame(ChessGame chessGame) {
+        this.chessGame = chessGame;
     }
 }
