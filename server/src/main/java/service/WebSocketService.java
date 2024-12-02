@@ -56,7 +56,6 @@ public class WebSocketService extends Service {
         var gameData = gameAccess.getGame(cmd.getGameID());
         var game = gameData.game();
         var move = cmd.getMove();
-        var color = game.getTeamTurn();
 
         if (!Objects.equals(authData.username(), gameData.whiteUsername()) && !Objects.equals(authData.username(), gameData.blackUsername())) {
             throw new InvalidMoveException("You are an observer. You cannot make a move.");
