@@ -41,14 +41,14 @@ public class ChessService extends Service {
             throw new DataAccessException("game not found", 500);
         }
         if (req.playerColor().equals("BLACK")) {
-            if (game.blackUsername() != null) {
+            if (!Objects.equals(game.blackUsername(), auth.username()) && game.blackUsername() != null) {
                 throw new DataAccessException("already taken", 403);
             } else {
                 var newGame = new GameData(game.gameID(), game.whiteUsername(), auth.username(), game.gameName(), game.game());
                 gameAccess.updateGame(newGame);
             }
         } else {
-            if (game.whiteUsername() != null) {
+            if (!Objects.equals(game.whiteUsername(), auth.username()) && game.whiteUsername() != null) {
                 throw new DataAccessException("already taken", 403);
             } else {
                 var newGame = new GameData(game.gameID(), auth.username(), game.blackUsername(), game.gameName(), game.game());
