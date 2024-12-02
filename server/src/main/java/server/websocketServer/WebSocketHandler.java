@@ -60,7 +60,7 @@ public class WebSocketHandler {
 
                 var color = getColor(pack.gameData(), pack.username());
 
-                var message = new LoadGameMessage(pack.gameData(), color);
+                var message = new LoadGameMessage(pack.gameData(), color, null);
                 sendMessage(new Gson().toJson(message), session);
 
                 SendNotificationBroadcast(pack.username() + " has joined the game.", command.getGameID(), session);
@@ -80,7 +80,7 @@ public class WebSocketHandler {
 
                 var color = getColor(res.gameData(), res.username());
 
-                broadcast(command.getGameID(), new Gson().toJson(new LoadGameMessage(res.gameData(), color)), null);
+                broadcast(command.getGameID(), new Gson().toJson(new LoadGameMessage(res.gameData(), color, command.getMove())), null);
                 SendNotificationBroadcast(res.username() + " has made a move.", command.getGameID(), session);
 
                 if (res.inCheckmate()) {
@@ -121,7 +121,7 @@ public class WebSocketHandler {
                 sendErrorMessage("This game is over, you cannot perform this action.", session);
             } else {
                 gameActive.put(command.getGameID(), false);
-                SendNotificationBroadcast(username + "has resigned from the game.", command.getGameID(), session);
+                SendNotificationBroadcast(username + " has resigned from the game.", command.getGameID(), session);
                 var message = new NotificationMessage("You have resigned from the game.");
                 sendMessage(new Gson().toJson(message), session);
             }

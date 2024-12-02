@@ -77,13 +77,13 @@ public class WebSocketService extends Service {
         game.makeMove(move);
 
         boolean inCheck = false, inCheckmate = false, inStalemate = false;
-        if (game.isInCheckmate(color)) {
+        if (game.isInCheckmate(game.getTeamTurn())) {
             inCheckmate = true;
         }
-        if (game.isInCheck(color)) {
+        if (game.isInCheck(game.getTeamTurn())) {
             inCheck = true;
         }
-        if (game.isInStalemate(color)) {
+        if (game.isInStalemate(game.getTeamTurn())) {
             inStalemate = true;
         }
 

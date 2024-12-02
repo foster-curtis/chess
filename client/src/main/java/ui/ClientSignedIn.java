@@ -124,7 +124,7 @@ public class ClientSignedIn implements Client {
         }
 
         this.state = State.INGAME;
-        this.gameID = num;
+        this.gameID = gameID;
         this.playerColor = playerColor;
         return "";
     }
