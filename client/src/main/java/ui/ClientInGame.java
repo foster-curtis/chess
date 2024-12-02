@@ -22,13 +22,13 @@ public class ClientInGame implements Client {
     private final Integer gameID;
     private State state = State.INGAME;
     private ChessGame chessGame;
-    private final ChessGame.TeamColor player_color;
+    private final ChessGame.TeamColor playerColor;
 
     public ClientInGame(int port, AuthData currUserAuth, int gameID, ChessGame.TeamColor playerColor, ServerMessageObserver serverMessageObserver) {
         this.ws = new WebSocketFacade(port, serverMessageObserver, this);
         this.currentUserAuth = currUserAuth;
         this.gameID = gameID;
-        this.player_color = playerColor;
+        this.playerColor = playerColor;
 
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, currentUserAuth.authToken(), gameID);
         try {
@@ -57,7 +57,7 @@ public class ClientInGame implements Client {
     }
 
     private String redrawBoard() {
-        return new BoardUI(chessGame.getBoard(), player_color).displayBoard(null, null);
+        return new BoardUI(chessGame.getBoard(), playerColor).displayBoard(null, null);
     }
 
     private String leave() {
@@ -101,9 +101,9 @@ public class ClientInGame implements Client {
                 }
                 var pieceType = chessGame.getBoard().getPiece(start).getPieceType();
                 if (pieceType == ChessPiece.PieceType.PAWN) {
-                    if (player_color == BLACK && end.getRow() == 1) {
+                    if (playerColor == BLACK && end.getRow() == 1) {
                         promotionPiece = getPromotionPiece();
-                    } else if (player_color == WHITE && end.getRow() == 8) {
+                    } else if (playerColor == WHITE && end.getRow() == 8) {
                         promotionPiece = getPromotionPiece();
                     }
                 }
@@ -196,7 +196,7 @@ public class ClientInGame implements Client {
         var position = checkAndSetCoordinate(input);
         Collection<ChessMove> moves = chessGame.validMoves(position);
 
-        return new BoardUI(board, player_color).displayBoard(moves, new ChessMove(position, null, null));
+        return new BoardUI(board, playerColor).displayBoard(moves, new ChessMove(position, null, null));
     }
 
     @Override
@@ -223,7 +223,7 @@ public class ClientInGame implements Client {
 
     @Override
     public ChessGame.TeamColor getPlayerColor() {
-        return this.player_color;
+        return this.playerColor;
     }
 
     public void setChessGame(ChessGame chessGame) {

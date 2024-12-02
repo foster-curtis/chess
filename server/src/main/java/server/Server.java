@@ -7,7 +7,7 @@ import model.*;
 import service.ChessService;
 import exception.ResponseException;
 import spark.*;
-import server.websocketServer.WebSocketHandler;
+import server.websocketserver.WebSocketHandler;
 
 import java.util.Collection;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package server.websocketServer;
+package server.websocketserver;
 
 import chess.ChessGame;
 import chess.InvalidMoveException;
@@ -63,7 +63,7 @@ public class WebSocketHandler {
                 var message = new LoadGameMessage(pack.gameData(), color, null);
                 sendMessage(new Gson().toJson(message), session);
 
-                SendNotificationBroadcast(pack.username() + " has joined the game.", command.getGameID(), session);
+                sendNotificationBroadcast(pack.username() + " has joined the game.", command.getGameID(), session);
             }
         } catch (DataAccessException e) {
             sendErrorMessage(e.getMessage(), session);
@@ -81,16 +81,16 @@ public class WebSocketHandler {
                 var color = getColor(res.gameData(), res.username());
 
                 broadcast(command.getGameID(), new Gson().toJson(new LoadGameMessage(res.gameData(), color, command.getMove())), null);
-                SendNotificationBroadcast(res.username() + " has made a move.", command.getGameID(), session);
+                sendNotificationBroadcast(res.username() + " has made a move.", command.getGameID(), session);
 
                 if (res.inCheckmate()) {
-                    SendNotificationBroadcast(res.username() + " is in Checkmate!", command.getGameID(), null);
+                    sendNotificationBroadcast(res.username() + " is in Checkmate!", command.getGameID(), null);
                     gameActive.put(command.getGameID(), false);
                 } else if (res.inStalemate()) {
-                    SendNotificationBroadcast(res.username() + " is in Stalemate!", command.getGameID(), null);
+                    sendNotificationBroadcast(res.username() + " is in Stalemate!", command.getGameID(), null);
                     gameActive.put(command.getGameID(), false);
                 } else if (res.inCheck()) {
-                    SendNotificationBroadcast(res.username() + " is in Check!", command.getGameID(), null);
+                    sendNotificationBroadcast(res.username() + " is in Check!", command.getGameID(), null);
                 }
             }
         } catch (DataAccessException | InvalidMoveException e) {
@@ -108,7 +108,7 @@ public class WebSocketHandler {
         try {
             var username = service.leave(command, gameExpired);
 
-            SendNotificationBroadcast(username + " has left the game.", command.getGameID(), session);
+            sendNotificationBroadcast(username + " has left the game.", command.getGameID(), session);
         } catch (DataAccessException e) {
             sendErrorMessage(e.getMessage(), session);
         }
@@ -121,7 +121,7 @@ public class WebSocketHandler {
                 sendErrorMessage("This game is over, you cannot perform this action.", session);
             } else {
                 gameActive.put(command.getGameID(), false);
-                SendNotificationBroadcast(username + " has resigned from the game.", command.getGameID(), session);
+                sendNotificationBroadcast(username + " has resigned from the game.", command.getGameID(), session);
                 var message = new NotificationMessage("You have resigned from the game.");
                 sendMessage(new Gson().toJson(message), session);
             }
@@ -130,7 +130,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void SendNotificationBroadcast(String message, Integer gameID, Session session) throws IOException {
+    private void sendNotificationBroadcast(String message, Integer gameID, Session session) throws IOException {
         var broadcast = new NotificationMessage(message);
         broadcast(gameID, new Gson().toJson(broadcast), session);
     }
