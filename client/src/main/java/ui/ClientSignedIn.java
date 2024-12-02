@@ -134,7 +134,7 @@ public class ClientSignedIn implements Client {
         System.out.println(SET_TEXT_COLOR_GREEN + "Successfully joined game " + num + " as an observer.");
         System.out.print(SET_TEXT_COLOR_WHITE);
         this.state = State.INGAME;
-        this.gameID = num;
+        this.gameID = gameMap.get(num);
         return "";
     }
 
@@ -145,6 +145,11 @@ public class ClientSignedIn implements Client {
             String input = scanner.nextLine();
             try {
                 num = Integer.parseInt(input);
+                if (!gameMap.containsKey(num)) {
+                    num = 0;
+                    System.out.println(SET_TEXT_COLOR_RED + "Invalid Game ID.");
+                    System.out.print(SET_TEXT_COLOR_WHITE);
+                }
             } catch (NumberFormatException e) {
                 System.out.println(SET_TEXT_COLOR_RED + "Error: Must be a number. Please input a game number, not a game name.");
                 System.out.print(SET_TEXT_COLOR_WHITE);

@@ -95,6 +95,9 @@ public class ClientInGame implements Client {
                 }
                 if (chessGame.getBoard().getPiece(start) == null) {
                     System.out.println(SET_TEXT_COLOR_RED + "No piece at start position." + SET_TEXT_COLOR_WHITE);
+                    start = null;
+                    end = null;
+                    continue;
                 }
                 var pieceType = chessGame.getBoard().getPiece(start).getPieceType();
                 if (pieceType == ChessPiece.PieceType.PAWN) {

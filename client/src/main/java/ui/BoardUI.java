@@ -153,11 +153,11 @@ public class BoardUI {
         }
         if (move != null) {
             if (Objects.equals(new ChessPosition(row + 1, col + 1), move.getStartPosition())) {
-                builder.append(SET_BG_COLOR_RED);
+                builder.append(SET_BG_COLOR_PINK);
             }
 
             if (validMoves == null && move.getEndPosition() != null && Objects.equals(new ChessPosition(row + 1, col + 1), move.getEndPosition())) {
-                builder.append(SET_BG_COLOR_RED);
+                builder.append(SET_BG_COLOR_PINK);
             }
         }
 
