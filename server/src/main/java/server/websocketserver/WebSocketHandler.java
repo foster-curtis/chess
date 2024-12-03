@@ -63,7 +63,7 @@ public class WebSocketHandler {
                 var message = new LoadGameMessage(pack.gameData(), color, null);
                 sendMessage(new Gson().toJson(message), session);
 
-                sendNotificationBroadcast(pack.username() + " has joined the game.", command.getGameID(), session);
+                sendNotificationBroadcast(pack.username() + " joined the game as " + color.toString().toLowerCase() + ".", command.getGameID(), session);
             }
         } catch (DataAccessException e) {
             sendErrorMessage(e.getMessage(), session);
@@ -81,16 +81,17 @@ public class WebSocketHandler {
                 var color = getColor(res.gameData(), res.username());
 
                 broadcast(command.getGameID(), new Gson().toJson(new LoadGameMessage(res.gameData(), color, command.getMove())), null);
-                sendNotificationBroadcast(res.username() + " has made a move.", command.getGameID(), session);
+                sendNotificationBroadcast(res.username() + " made a move: " + command.getStringMove(), command.getGameID(), session);
 
                 if (res.inCheckmate()) {
-                    sendNotificationBroadcast(res.username() + " is in Checkmate!", command.getGameID(), null);
+                    String message = res.opponentUsername() + " is in Checkmate! " + res.username() + " wins!";
+                    sendNotificationBroadcast(message, command.getGameID(), null);
                     gameActive.put(command.getGameID(), false);
                 } else if (res.inStalemate()) {
-                    sendNotificationBroadcast(res.username() + " is in Stalemate!", command.getGameID(), null);
+                    sendNotificationBroadcast(res.opponentUsername() + " is in Stalemate! There is no winner.", command.getGameID(), null);
                     gameActive.put(command.getGameID(), false);
                 } else if (res.inCheck()) {
-                    sendNotificationBroadcast(res.username() + " is in Check!", command.getGameID(), null);
+                    sendNotificationBroadcast(res.opponentUsername() + " is in Check!", command.getGameID(), null);
                 }
             }
         } catch (DataAccessException | InvalidMoveException e) {

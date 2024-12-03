@@ -12,6 +12,8 @@ import websocket.commands.UserGameCommand;
 
 import java.util.Objects;
 
+import static chess.ChessGame.TeamColor.BLACK;
+
 public class WebSocketService extends Service {
 
     public WebSocketService(GameDAO gameDAO, UserDAO userDAO, AuthDAO authDAO) {
@@ -56,6 +58,7 @@ public class WebSocketService extends Service {
         var gameData = gameAccess.getGame(cmd.getGameID());
         var game = gameData.game();
         var move = cmd.getMove();
+        String opponentUser;
 
         if (!Objects.equals(authData.username(), gameData.whiteUsername()) && !Objects.equals(authData.username(), gameData.blackUsername())) {
             throw new InvalidMoveException("You are an observer. You cannot make a move.");
@@ -63,7 +66,7 @@ public class WebSocketService extends Service {
         var pieceColor = game.getBoard().getPiece(move.getStartPosition()).getTeamColor();
         if (pieceColor == ChessGame.TeamColor.WHITE && !Objects.equals(authData.username(), gameData.whiteUsername())) {
             throw new InvalidMoveException("That is not your piece!");
-        } else if (pieceColor == ChessGame.TeamColor.BLACK && !Objects.equals(authData.username(), gameData.blackUsername())) {
+        } else if (pieceColor == BLACK && !Objects.equals(authData.username(), gameData.blackUsername())) {
             throw new InvalidMoveException("That is not your piece!");
         }
 
@@ -88,6 +91,12 @@ public class WebSocketService extends Service {
 
         gameAccess.updateGame(gameData);
 
-        return new MakeMoveResponse(authData.username(), gameData, inCheck, inCheckmate, inStalemate);
+        if (gameData.game().getTeamTurn() == BLACK) {
+            opponentUser = gameData.blackUsername();
+        } else {
+            opponentUser = gameData.whiteUsername();
+        }
+
+        return new MakeMoveResponse(authData.username(), opponentUser, gameData, inCheck, inCheckmate, inStalemate);
     }
 }

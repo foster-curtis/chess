@@ -76,6 +76,7 @@ public class ClientInGame implements Client {
         ChessPosition start = null;
         ChessPosition end = null;
         ChessPiece.PieceType promotionPiece = null;
+        String input = "";
 
         System.out.print("""
                 Input the start and end coordinates as column (letter) and then row (number).
@@ -83,35 +84,32 @@ public class ClientInGame implements Client {
                 """);
         while (start == null || end == null) {
             System.out.print(">>> ");
-            var input = scanner.nextLine();
+            input = scanner.nextLine();
             var moves = input.split(" ");
             if (moves.length != 2) {
                 System.out.println(SET_TEXT_COLOR_RED + "Incorrect number of coordinates." + SET_TEXT_COLOR_WHITE);
             } else {
                 start = checkAndSetCoordinate(moves[0]);
                 end = checkAndSetCoordinate(moves[1]);
-                if (start == null || end == null) {
-                    continue;
-                }
-                if (chessGame.getBoard().getPiece(start) == null) {
+                if (start != null && chessGame.getBoard().getPiece(start) == null) {
                     System.out.println(SET_TEXT_COLOR_RED + "No piece at start position." + SET_TEXT_COLOR_WHITE);
                     start = null;
                     end = null;
-                    continue;
-                }
-                var pieceType = chessGame.getBoard().getPiece(start).getPieceType();
-                if (pieceType == ChessPiece.PieceType.PAWN) {
-                    if (playerColor == BLACK && end.getRow() == 1) {
-                        promotionPiece = getPromotionPiece();
-                    } else if (playerColor == WHITE && end.getRow() == 8) {
-                        promotionPiece = getPromotionPiece();
-                    }
                 }
             }
         }
 
+        var pieceType = chessGame.getBoard().getPiece(start).getPieceType();
+        if (pieceType == ChessPiece.PieceType.PAWN) {
+            if (playerColor == BLACK && end.getRow() == 1) {
+                promotionPiece = getPromotionPiece();
+            } else if (playerColor == WHITE && end.getRow() == 8) {
+                promotionPiece = getPromotionPiece();
+            }
+        }
+
         try {
-            ws.send(new MakeMoveCommand(currentUserAuth.authToken(), this.gameID, new ChessMove(start, end, promotionPiece)));
+            ws.send(new MakeMoveCommand(currentUserAuth.authToken(), this.gameID, new ChessMove(start, end, promotionPiece), input));
         } catch (IOException e) {
             System.out.println("Unhandled IO error.");
         }

@@ -174,6 +174,7 @@ public class ChessGame {
     }
 
     private boolean checkmateHelper(Collection<ChessMove> possibleMoves, TeamColor teamColor) {
+        boolean returnSaver = true;
         for (var move : possibleMoves) {
             ChessPiece capturedPiece = null;
             if (gameBoard.getPiece(move.getEndPosition()) != null) {
@@ -181,11 +182,11 @@ public class ChessGame {
             }
             gameBoard.makeMove(move);
             if (!isInCheck(teamColor)) {
-                return false;
+                returnSaver = false;
             }
             gameBoard.undoMove(move, capturedPiece);
         }
-        return true;
+        return returnSaver;
     }
 
     /**
