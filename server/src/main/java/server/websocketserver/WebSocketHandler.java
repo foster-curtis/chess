@@ -63,7 +63,12 @@ public class WebSocketHandler {
                 var message = new LoadGameMessage(pack.gameData(), color, null);
                 sendMessage(new Gson().toJson(message), session);
 
-                String notification = pack.username() + " joined the game as " + color.toString().toLowerCase() + ".";
+                String notification;
+                if (color != null) {
+                    notification = pack.username() + " joined the game as " + color.toString().toLowerCase() + ".";
+                } else {
+                    notification = pack.username() + " joined the game.";
+                }
                 sendNotificationBroadcast(notification, command.getGameID(), session);
             }
         } catch (DataAccessException e) {
