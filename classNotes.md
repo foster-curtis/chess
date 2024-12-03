@@ -461,10 +461,39 @@ Log Levels:
   - Bcrypt
   - SHA-256
 
-
 ## Encryption:
 - Encryption -> makes things unreadable
 - Decryption -> makes things readable again
+
+
+# Concurrency
+- How do I implement concurrency?
+    - Java `Thread` class
+      - Override `run` and call the `start()` method
+    - Provide `runnable` using lambdas. `new Thread(() -> runnable code).start();`
+    - The Thread `.join()` method blocks the main thread until the other thread returns. The data from the other thread is then available in the main thread
+    - Using `.submit()` uses the `Callable` class, which allows for a return value, unlike `run`.
+- Most effecient when you run multiple programs parallel concurrent
+- There is always one "main" thread, so when you create a thread you are making the second one, not the first. All threads will be running at the same time.
+- Task Submitter --> Executor Service ( Task Queue --> Thread Pool )
+
+Critical Resources:
+- A critical resource is anything that can be read from/written to at the same time, and you have to protect it!!
+- Have a Critical Section of your code to manage critical resources
+
+Synchronization:
+- keyword `synchronized`
+- Put it on function declarations or around critical sections of your code which will only allow one thread access to the critical resource at a time.
+- Atomic methods allow us to be thread safe without using synchronization, which makes the runtime shorter. Atomic methods are methods that are only one single instruction at the CPU level.
+
+Classes:
+- Atomic Integer
+- Atomic Boolean
+- Blocking Queues (Array, List, others)
+- Concurrent HashMap
+
+You can create 'atomic commands' for a database by cancelling autoCommit and committing several operations as a single operation. The database will essentially create a queue and pull in one operation at a time and do the next one when it is done.
+
 
 
 
