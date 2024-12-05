@@ -525,7 +525,7 @@ QCon by InfoQ
 4 Hot takeways
 - MLOps "Machine Learning Operations" is hot market
 - Using AI for Software Engineering
-- Soft Skills for delivering software -> Curiosity, Creativity, Christlike, Compatibility (Work well with others)
+- Soft Skills for delivering software -> Curiosity, Creativity, Christlike, Collaborative (Work well with others)
 - Rust is hot, but mostly has a lot of hype and isn't going to take over
 
 - 85% of all AI projects fail!
