@@ -494,8 +494,59 @@ Classes:
 
 You can create 'atomic commands' for a database by cancelling autoCommit and committing several operations as a single operation. The database will essentially create a queue and pull in one operation at a time and do the next one when it is done.
 
+# Maven
+### Command Line builds
+Installation: maven.apache.org/download.cgi
+It's also already installed with IntelliJ, so you can just go to the IntelliJ file that has Maven and access it from there.
+Maven files are pom files written in xml
 
+Project Structure:
+Must have the following directory structure: src -> main -> java -> Main.java (src -> test -> java -> MainTest.java for tests)
+Will not compile otherwise!
 
+### Terms and Definitions
+Lifecycle - collection of phases in the programming and distribution process
+phase
+code
 
+Phases:
+- clean : delete the target directory
+- compile : compile the target file
+- test : run the tests in the target directory
+- package : check that the previous phases are done and then package the target directory for distribution
 
+### Jar Files
+- Byte code representations of all your classes
 
+Professor Jensen Teaches 329
+
+QCon by InfoQ
+- Very unbiased, focuses on all emerging trends from different parts of the industry
+4 Hot takeways
+- MLOps "Machine Learning Operations" is hot market
+- Using AI for Software Engineering
+- Soft Skills for delivering software -> Curiosity, Creativity, Christlike, Compatibility (Work well with others)
+- Rust is hot, but mostly has a lot of hype and isn't going to take over
+
+- 85% of all AI projects fail!
+- Common problems:
+  - Tackling the wrong problem
+  - Acquiring data to train models
+  - Turning model into a product
+  - Works offline but not online
+  - Unseen non-technical obstacles
+
+Most important parts of a successful team:
+- Trust -> not a competition
+- Autonomy -> everyone can perform their job
+- Purpose -> more than just coding or getting a paycheck
+- Psychological Safety -> feel comfortable asking questions, expressing concerns, proposing alternitives
+
+"The fastest API call is one that doesn't happen"
+
+Tell the AI what you want to accomplish, and have it ask you how you want it to be done and share the trade offs and options
+
+https://architechtelevator.com/book
+Architects create ideas that they can share with people of all levels and responsibilities
+
+"most likely you will not be competing with AI for your job, but you will be competing with people who know how to use AI to do your job better"
